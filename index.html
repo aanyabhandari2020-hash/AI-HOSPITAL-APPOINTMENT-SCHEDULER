@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hospital Appointment Scheduler</title>
+</head>
+
+<body>
+
+    <h1>AI Hospital Appointment Scheduler</h1>
+
+    <p>
+        Book your appointment with our AI-assisted scheduling system.
+    </p>
+
+    <hr>
+
+    <h2>Patient Information</h2>
+
+    <form>
+
+        <label>Patient Name:</label><br>
+        <input type="text" id="patientName" placeholder="Enter your name">
+        <br><br>
+
+        <label>Age:</label><br>
+        <input type="number" id="age" placeholder="Enter your age">
+        <br><br>
+
+        <label>Choose Specialization:</label><br>
+        <select id="specialization">
+            <option value="">Select Doctor Specialization</option>
+            <option value="General Physician">General Physician</option>
+            <option value="Cardiologist">Cardiologist</option>
+            <option value="Dermatologist">Dermatologist</option>
+            <option value="Dentist">Dentist</option>
+            <option value="Pediatrician">Pediatrician</option>
+        </select>
+
+        <br><br>
+
+        <label>Preferred Date:</label><br>
+        <input type="date" id="date">
+        <br><br>
+
+        <label>Preferred Time:</label><br>
+        <input type="time" id="time">
+        <br><br>
+
+        <button type="button" onclick="scheduleAppointment()">
+            Find Best Slot
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h2>AI Scheduling Recommendation</h2>
+
+    <div id="result">
+        Your recommended appointment will appear here.
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
