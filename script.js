@@ -1,502 +1,448 @@
-```javascript
+
 "use strict";
 
-// Medi Slot: illustrative demo data, not a real medical directory.
-const doctors = [
-  {
-    id: "gp1",
-    name: "Dr. Rahul Sharma",
-    specialty: "General Physician",
-    experience: 8,
-    fee: 400,
-    rating: 4.7,
-    avatar: "👨‍⚕️",
-    description: "General health consultations and routine check-ups.",
-    slots: ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30"],
-    reviews: [
-      { stars: 5, text: "Friendly and explained the consultation clearly.", author: "Demo patient" },
-      { stars: 4, text: "A helpful example of patient feedback.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "ca1",
-    name: "Dr. Priya Mehta",
-    specialty: "Cardiologist",
-    experience: 10,
-    fee: 700,
-    rating: 4.9,
-    avatar: "👩‍⚕️",
-    description: "Heart-health consultations and cardiovascular assessment.",
-    slots: ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30"],
-    reviews: [
-      { stars: 5, text: "Clear explanations and a professional approach.", author: "Demo patient" },
-      { stars: 5, text: "A sample review for the website demonstration.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "der1",
-    name: "Dr. Neha Kapoor",
-    specialty: "Dermatologist",
-    experience: 7,
-    fee: 500,
-    rating: 4.8,
-    avatar: "👩‍⚕️",
-    description: "Skin and hair consultations.",
-    slots: ["09:30", "10:00", "10:30", "11:00", "11:30", "12:00"],
-    reviews: [
-      { stars: 5, text: "The information was easy to understand.", author: "Demo patient" },
-      { stars: 4, text: "Illustrative feedback for the demo profile.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "den1",
-    name: "Dr. Arjun Verma",
-    specialty: "Dentist",
-    experience: 6,
-    fee: 350,
-    rating: 4.6,
-    avatar: "🦷",
-    description: "General dental consultations and oral-health advice.",
-    slots: ["09:00", "09:30", "10:00", "11:00", "11:30", "12:00"],
-    reviews: [
-      { stars: 5, text: "A friendly example of a dental review.", author: "Demo patient" },
-      { stars: 4, text: "Sample feedback displayed for demonstration.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "ped1",
-    name: "Dr. Anjali Singh",
-    specialty: "Pediatrician",
-    experience: 9,
-    fee: 450,
-    rating: 4.8,
-    avatar: "👩‍⚕️",
-    description: "Child-health consultations and routine check-ups.",
-    slots: ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30"],
-    reviews: [
-      { stars: 5, text: "A sample review for the pediatric profile.", author: "Demo patient" },
-      { stars: 5, text: "Example feedback for the website interface.", author: "Demo patient" }
-    ]
-  }
-];
+document.addEventListener("DOMContentLoaded", () => {
+  const doctors = [
+    {
+      id: "gp1",
+      name: "Dr. Rahul Sharma",
+      specialty: "General Physician",
+      rating: 4.7,
+      reviews: 310,
+      experience: "8 years"
+    },
+    {
+      id: "gp2",
+      name: "Dr. Neha Joshi",
+      specialty: "General Physician",
+      rating: 4.5,
+      reviews: 185,
+      experience: "6 years"
+    },
+    {
+      id: "card1",
+      name: "Dr. Aditi Verma",
+      specialty: "Cardiologist",
+      rating: 4.9,
+      reviews: 220,
+      experience: "12 years"
+    },
+    {
+      id: "card2",
+      name: "Dr. Kunal Mehta",
+      specialty: "Cardiologist",
+      rating: 4.7,
+      reviews: 345,
+      experience: "10 years"
+    },
+    {
+      id: "derm1",
+      name: "Dr. Priya Kapoor",
+      specialty: "Dermatologist",
+      rating: 4.8,
+      reviews: 190,
+      experience: "9 years"
+    },
+    {
+      id: "dent1",
+      name: "Dr. Arjun Singh",
+      specialty: "Dentist",
+      rating: 4.6,
+      reviews: 275,
+      experience: "7 years"
+    },
+    {
+      id: "ped1",
+      name: "Dr. Meera Patel",
+      specialty: "Pediatrician",
+      rating: 4.9,
+      reviews: 160,
+      experience: "11 years"
+    }
+  ];
 
-const STORAGE = {
-  searches: "mediSlotSearchHistoryV1",
-  viewed: "mediSlotViewedDoctorsV1"
-};
+  const availableTimes = [
+    "09:00",
+    "09:30",
+    "10:30",
+    "11:30",
+    "12:30",
+    "14:00",
+    "15:00",
+    "16:00"
+  ];
 
-const $ = (id) => document.getElementById(id);
+  const form = document.getElementById("appointmentForm");
+  const specialtyInput = document.getElementById("specialty");
+  const doctorInput = document.getElementById("preferredDoctor");
+  const ratingInput = document.getElementById("ratingPreference");
+  const dateInput = document.getElementById("appointmentDate");
+  const timeInput = document.getElementById("timePreference");
 
-const searchInput = $("doctorSearch");
-const specialtyFilter = $("specialtyFilter");
-const sortDoctors = $("sortDoctors");
-const doctorList = $("doctorList");
-const resultsCount = $("resultsCount");
+  const resultsSection = document.getElementById("resultsSection");
+  const doctorResults = document.getElementById("doctorResults");
+  const resultsMessage = document.getElementById("resultsMessage");
 
-let currentQuery = "";
-let searchTimer = null;
+  const confirmationSection =
+    document.getElementById("confirmationSection");
+  const confirmationDetails =
+    document.getElementById("confirmationDetails");
+  const historyContainer = document.getElementById("bookingHistory");
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
+  let currentSearch = null;
 
-function readHistory(key) {
-  try {
-    const data = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeHistory(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function recordSearch(query, specialty) {
-  const label = query.trim() || "All doctors";
-  const entry = {
-    query: query.trim(),
-    specialty: specialty,
-    label: specialty ? `${label} · ${specialty}` : label,
-    date: new Date().toLocaleString()
-  };
-
-  let history = readHistory(STORAGE.searches);
-
-  history = history.filter((item) =>
-    item.query !== entry.query || item.specialty !== entry.specialty
-  );
-
-  history.unshift(entry);
-  writeHistory(STORAGE.searches, history.slice(0, 10));
-  renderHistory();
-}
-
-function recordViewed(doctorId) {
-  let history = readHistory(STORAGE.viewed);
-
-  history = history.filter((item) => item.id !== doctorId);
-  history.unshift({ id: doctorId, date: new Date().toLocaleString() });
-
-  writeHistory(STORAGE.viewed, history.slice(0, 10));
-  renderHistory();
-}
-
-function filteredDoctors() {
-  const query = searchInput.value.trim().toLowerCase();
-  const specialty = specialtyFilter.value;
-
-  let list = doctors.filter((doctor) => {
-    const matchesQuery = [
-      doctor.name,
-      doctor.specialty,
-      doctor.description
-    ].join(" ").toLowerCase().includes(query);
-
-    const matchesSpecialty = !specialty || doctor.specialty === specialty;
-
-    return matchesQuery && matchesSpecialty;
-  });
-
-  switch (sortDoctors.value) {
-    case "rating":
-      list.sort((a, b) => b.rating - a.rating);
-      break;
-    case "fee-low":
-      list.sort((a, b) => a.fee - b.fee);
-      break;
-    case "experience":
-      list.sort((a, b) => b.experience - a.experience);
-      break;
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]);
   }
 
-  return list;
-}
-
-function renderDoctors() {
-  const list = filteredDoctors();
-
-  resultsCount.textContent =
-    `${list.length} doctor${list.length === 1 ? "" : "s"} found`;
-
-  if (!list.length) {
-    doctorList.innerHTML =
-      '<p class="muted">No matching doctors. Try another name or specialization.</p>';
-    return;
+  function localDateString(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
-  doctorList.innerHTML = list.map((doctor) => `
-    <article class="doctor-card" id="doctor-${escapeHTML(doctor.id)}">
-      <div class="doctor-top">
-        <div class="doctor-avatar" aria-hidden="true">${doctor.avatar}</div>
-        <div>
-          <h3>${escapeHTML(doctor.name)}</h3>
-          <p class="doctor-specialty">${escapeHTML(doctor.specialty)}</p>
-          <p class="doctor-rating">★ ${doctor.rating.toFixed(1)} / 5
-            <span class="muted">(${doctor.reviews.length} demo reviews)</span>
-          </p>
-        </div>
-      </div>
+  dateInput.min = localDateString();
+  dateInput.value = localDateString();
 
-      <p class="doctor-description">${escapeHTML(doctor.description)}</p>
+  function getBookings() {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem("medislotDemoBookings") || "[]"
+      );
 
-      <div class="doctor-details">
-        <span>🩺 Experience: ${doctor.experience} years (demo)</span>
-        <span>💳 Consultation fee: ₹${doctor.fee} (demo)</span>
-        <span>🕒 Listed times: ${doctor.slots.map(formatTime).join(", ")}</span>
-      </div>
-
-      <div class="review-list">
-        <strong>Sample patient reviews</strong>
-        ${doctor.reviews.map((review) => `
-          <p> ${"★".repeat(review.stars)}${"☆".repeat(5 - review.stars)}
-            — ${escapeHTML(review.text)}
-          </p>
-          <p class="review-author">${escapeHTML(review.author)} · Fictional demo feedback</p>
-        `).join("")}
-      </div>
-
-      <div class="card-actions">
-        <button class="secondary-button" type="button"
-          data-action="view" data-id="${escapeHTML(doctor.id)}">
-          View profile
-        </button>
-        <button class="primary-button" type="button"
-          data-action="book" data-id="${escapeHTML(doctor.id)}">
-          Book appointment
-        </button>
-      </div>
-    </article>
-  `).join("");
-}
-
-function renderHistory() {
-  const searches = readHistory(STORAGE.searches);
-  const viewed = readHistory(STORAGE.viewed);
-
-  $("searchHistoryList").innerHTML = searches.length
-    ? searches.map((item, index) => `
-        <li>
-          <button type="button" data-search-index="${index}">
-            ${escapeHTML(item.label || item.query || "All doctors")}
-          </button>
-          <div class="muted small-text">${escapeHTML(item.date || "")}</div>
-        </li>
-      `).join("")
-    : '<li class="empty-history">No previous searches yet.</li>';
-
-  $("viewedHistoryList").innerHTML = viewed.length
-    ? viewed.map((item) => {
-        const doctor = doctors.find((d) => d.id === item.id);
-        if (!doctor) return "";
-
-        return `
-          <li>
-            <button type="button" data-viewed-id="${escapeHTML(doctor.id)}">
-              ${escapeHTML(doctor.name)}
-            </button>
-            <div class="muted small-text">${escapeHTML(doctor.specialty)} · ${escapeHTML(item.date || "")}</div>
-          </li>
-        `;
-      }).join("")
-    : '<li class="empty-history">No viewed doctors yet.</li>';
-}
-
-function formatTime(time) {
-  const [hourText, minute] = time.split(":");
-  let hour = Number(hourText);
-  const period = hour >= 12 ? "PM" : "AM";
-  hour = hour % 12 || 12;
-  return `${hour}:${minute} ${period}`;
-}
-
-function convertTime(time) {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
-}
-
-function setMinimumDate() {
-  const now = new Date();
-  const localDate = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, "0"),
-    String(now.getDate()).padStart(2, "0")
-  ].join("-");
-
-  $("date").min = localDate;
-}
-
-function showBookingMessage(message) {
-  $("result").innerHTML = `
-    <div class="ai-box">
-      <h3>🤖 Medi Slot Scheduling Recommendation</h3>
-      <p>${escapeHTML(message)}</p>
-      <p class="muted small-text">
-        This is a demo recommendation, not a confirmed appointment.
-        Contact the healthcare provider to verify the actual schedule.
-      </p>
-    </div>
-  `;
-}
-
-function scheduleAppointment(event) {
-  event.preventDefault();
-
-  const patientName = $("patientName").value.trim();
-  const age = Number($("age").value);
-  const specialization = $("specialization").value;
-  const date = $("date").value;
-  const preferredTime = $("time").value;
-
-  if (!patientName || !Number.isInteger(age) || age < 1 || age > 120 ||
-      !specialization || !date || !preferredTime) {
-    showBookingMessage("Please enter valid details in every required field.");
-    return;
+      return Array.isArray(saved) ? saved : [];
+    } catch (error) {
+      return [];
+    }
   }
 
-  // Compare date strings in YYYY-MM-DD format to avoid timezone issues.
-  const today = $("date").min;
-  if (date < today) {
-    showBookingMessage("Please choose today or a future date.");
-    return;
+  function saveBookings(bookings) {
+    try {
+      localStorage.setItem(
+        "medislotDemoBookings",
+        JSON.stringify(bookings)
+      );
+      return true;
+    } catch (error) {
+      alert(
+        "The browser could not save this demo booking. " +
+        "Please check your browser storage settings."
+      );
+      return false;
+    }
   }
 
-  const doctor = doctors.find((item) => item.specialty === specialization);
+  function updateDoctorOptions() {
+    const selectedDoctor = doctorInput.value;
+    const specialty = specialtyInput.value;
 
-  if (!doctor) {
-    showBookingMessage("No doctor is listed for this specialization.");
-    return;
-  }
-
-  let recommendedSlot = doctor.slots[0];
-  let smallestDifference = Infinity;
-
-  doctor.slots.forEach((slot) => {
-    const difference = Math.abs(
-      convertTime(slot) - convertTime(preferredTime)
+    const matchingDoctors = doctors.filter(doctor =>
+      specialty === "All" || doctor.specialty === specialty
     );
 
-    if (difference < smallestDifference) {
-      smallestDifference = difference;
-      recommendedSlot = slot;
+    doctorInput.innerHTML =
+      '<option value="Any">Any available doctor</option>';
+
+    matchingDoctors.forEach(doctor => {
+      const option = document.createElement("option");
+      option.value = doctor.id;
+      option.textContent = doctor.name;
+      doctorInput.appendChild(option);
+    });
+
+    if (matchingDoctors.some(doctor => doctor.id === selectedDoctor)) {
+      doctorInput.value = selectedDoctor;
     }
+  }
+
+  function getFilteredDoctors() {
+    let matching = doctors.filter(doctor => {
+      const specialtyMatches =
+        specialtyInput.value === "All" ||
+        doctor.specialty === specialtyInput.value;
+
+      const nameMatches =
+        doctorInput.value === "Any" ||
+        doctor.id === doctorInput.value;
+
+      const rating = ratingInput.value;
+      const ratingMatches =
+        rating === "any" ||
+        rating === "highest" ||
+        rating === "most" ||
+        doctor.rating >= Number(rating);
+
+      return specialtyMatches && nameMatches && ratingMatches;
+    });
+
+    if (ratingInput.value === "highest") {
+      matching.sort((a, b) =>
+        b.rating - a.rating || b.reviews - a.reviews
+      );
+    } else if (ratingInput.value === "most") {
+      matching.sort((a, b) =>
+        b.reviews - a.reviews || b.rating - a.rating
+      );
+    } else {
+      matching.sort((a, b) =>
+        b.rating - a.rating || b.reviews - a.reviews
+      );
+    }
+
+    return matching;
+  }
+
+  function timeMatchesPreference(time) {
+    if (timeInput.value === "morning") {
+      return time < "12:00";
+    }
+
+    if (timeInput.value === "afternoon") {
+      return time >= "12:00";
+    }
+
+    return true;
+  }
+
+  function isSlotBooked(doctorId, date, time) {
+    return getBookings().some(booking =>
+      booking.doctorId === doctorId &&
+      booking.date === date &&
+      booking.time === time
+    );
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(`${dateString}T12:00:00`);
+    return date.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  }
+
+  function formatTime(time) {
+    const [hourString, minute] = time.split(":");
+    const hour = Number(hourString);
+    const period = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour % 12 || 12;
+
+    return `${displayHour}:${minute} ${period}`;
+  }
+
+  function renderDoctors(matchingDoctors, date) {
+    doctorResults.innerHTML = "";
+
+    if (matchingDoctors.length === 0) {
+      resultsMessage.textContent =
+        "No doctors match your selected specialty and rating. " +
+        "Try changing your filters.";
+
+      doctorResults.innerHTML =
+        '<div class="empty-message">No matching doctors found.</div>';
+      return;
+    }
+
+    resultsMessage.textContent =
+      `${matchingDoctors.length} matching doctor(s) found. ` +
+      `Select a time slot to book your demo appointment.`;
+
+    matchingDoctors.forEach(doctor => {
+      const slots = availableTimes.filter(time =>
+        timeMatchesPreference(time) &&
+        !isSlotBooked(doctor.id, date, time)
+      );
+
+      const slotMarkup = slots.length
+        ? slots.map(time => `
+            <button
+              class="slot-button"
+              type="button"
+              data-doctor-id="${escapeHTML(doctor.id)}"
+              data-time="${escapeHTML(time)}">
+              ${escapeHTML(formatTime(time))} · Book
+            </button>
+          `).join("")
+        : '<p class="helper">No matching slots left for this date. Try another date or time preference.</p>';
+
+      const card = document.createElement("article");
+      card.className = "doctor-card";
+
+      card.innerHTML = `
+        <h3>${escapeHTML(doctor.name)}</h3>
+        <p class="specialty">${escapeHTML(doctor.specialty)}</p>
+        <div class="doctor-meta">
+          <span>★ ${doctor.rating.toFixed(1)} / 5</span>
+          <span>${doctor.reviews} demo reviews</span>
+          <span>${escapeHTML(doctor.experience)}</span>
+        </div>
+        <p class="slot-heading">
+          Available slots · ${escapeHTML(formatDate(date))}
+        </p>
+        <div class="slot-list">${slotMarkup}</div>
+      `;
+
+      doctorResults.appendChild(card);
+    });
+  }
+
+  function renderHistory() {
+    const bookings = getBookings().slice().reverse();
+
+    if (!bookings.length) {
+      historyContainer.innerHTML =
+        '<p class="helper">No demo appointments booked yet.</p>';
+      return;
+    }
+
+    historyContainer.innerHTML = bookings.map(booking => `
+      <div class="booking-item">
+        <strong>${escapeHTML(booking.patientName)}</strong>
+        <p>${escapeHTML(booking.doctorName)} · ${escapeHTML(booking.specialty)}</p>
+        <p>${escapeHTML(formatDate(booking.date))} at ${escapeHTML(formatTime(booking.time))}</p>
+        <span class="status">Demo booking saved</span>
+      </div>
+    `).join("");
+  }
+
+  specialtyInput.addEventListener("change", updateDoctorOptions);
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const date = dateInput.value;
+
+    if (!date || date < localDateString()) {
+      alert("Please select today or a future date.");
+      return;
+    }
+
+    currentSearch = {
+      patientName: document.getElementById("patientName").value.trim(),
+      patientEmail: document.getElementById("patientEmail").value.trim(),
+      specialty: specialtyInput.value,
+      preferredDoctor: doctorInput.value,
+      ratingPreference: ratingInput.value,
+      date,
+      timePreference: timeInput.value
+    };
+
+    if (!currentSearch.patientName) {
+      alert("Please enter the patient's name.");
+      return;
+    }
+
+    const matchingDoctors = getFilteredDoctors();
+
+    confirmationSection.hidden = true;
+    resultsSection.hidden = false;
+
+    renderDoctors(matchingDoctors, date);
+
+    resultsSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
 
-  const formattedDate = new Date(date + "T00:00:00").toLocaleDateString(
-    "en-IN",
-    { day: "numeric", month: "long", year: "numeric" }
-  );
+  doctorResults.addEventListener("click", event => {
+    const button = event.target.closest("[data-doctor-id][data-time]");
 
-  $("result").innerHTML = `
-    <div class="ai-box">
-      <h3>🤖 AI Scheduling Recommendation</h3>
-      <p>Hello <strong>${escapeHTML(patientName)}</strong>!</p>
-      <p>Based on your preferred time of
-        <strong>${formatTime(preferredTime)}</strong>,
-        the closest listed time is <strong>${formatTime(recommendedSlot)}</strong>.
-      </p>
-      <hr>
-      <p><strong>Doctor:</strong> ${escapeHTML(doctor.name)}</p>
-      <p><strong>Specialization:</strong> ${escapeHTML(specialization)}</p>
-      <p><strong>Date:</strong> ${escapeHTML(formattedDate)}</p>
-      <p><strong>Suggested time:</strong> ${formatTime(recommendedSlot)}</p>
-      <p class="status-message">
-        ℹ️ Suggested time only — availability and booking have not been confirmed.
-      </p>
-    </div>
-  `;
+    if (!button || !currentSearch) return;
 
-  recordSearch(specialization, specialization);
-}
+    const doctor = doctors.find(
+      item => item.id === button.dataset.doctorId
+    );
+    const time = button.dataset.time;
 
-function openDoctorProfile(doctorId) {
-  const doctor = doctors.find((item) => item.id === doctorId);
-  if (!doctor) return;
+    if (!doctor) return;
 
-  recordViewed(doctor.id);
-
-  const card = $(`doctor-${doctor.id}`);
-  if (card) {
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
-    card.setAttribute("tabindex", "-1");
-    card.focus({ preventScroll: true });
-  }
-}
-
-function chooseDoctorForBooking(doctorId) {
-  const doctor = doctors.find((item) => item.id === doctorId);
-  if (!doctor) return;
-
-  recordViewed(doctor.id);
-  $("specialization").value = doctor.specialty;
-  $("booking").scrollIntoView({ behavior: "smooth" });
-  $("patientName").focus({ preventScroll: true });
-}
-
-function applySearchHistory(index) {
-  const entry = readHistory(STORAGE.searches)[index];
-  if (!entry) return;
-
-  searchInput.value = entry.query || "";
-  specialtyFilter.value = entry.specialty || "";
-  currentQuery = searchInput.value;
-
-  renderDoctors();
-  $("search").scrollIntoView({ behavior: "smooth" });
-}
-
-searchInput.addEventListener("input", () => {
-  renderDoctors();
-
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    const query = searchInput.value.trim();
-    const specialty = specialtyFilter.value;
-
-    if (query || specialty) {
-      const signature = `${query}|${specialty}`;
-      if (signature !== currentQuery) {
-        currentQuery = signature;
-        recordSearch(query, specialty);
-      }
+    if (currentSearch.specialty !== "All" &&
+        doctor.specialty !== currentSearch.specialty) {
+      alert("This doctor does not match your selected specialty.");
+      return;
     }
-  }, 600);
-});
 
-specialtyFilter.addEventListener("change", () => {
-  renderDoctors();
-  currentQuery = `${searchInput.value.trim()}|${specialtyFilter.value}`;
-  recordSearch(searchInput.value, specialtyFilter.value);
-});
+    if (currentSearch.preferredDoctor !== "Any" &&
+        doctor.id !== currentSearch.preferredDoctor) {
+      alert("This is not your selected preferred doctor.");
+      return;
+    }
 
-sortDoctors.addEventListener("change", renderDoctors);
+    if (doctor.rating < 4 &&
+        ["4", "4.5"].includes(currentSearch.ratingPreference)) {
+      alert("This doctor does not meet your selected rating.");
+      return;
+    }
 
-$("clearSearch").addEventListener("click", () => {
-  searchInput.value = "";
-  specialtyFilter.value = "";
-  sortDoctors.value = "recommended";
-  currentQuery = "";
-  renderDoctors();
-  searchInput.focus();
-});
+    if (currentSearch.ratingPreference === "4.5" &&
+        doctor.rating < 4.5) {
+      alert("Please select a doctor rated 4.5 or higher.");
+      return;
+    }
 
-doctorList.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return;
+    if (!timeMatchesPreference(time)) {
+      alert("Please choose a slot within your preferred time.");
+      return;
+    }
 
-  if (button.dataset.action === "view") {
-    openDoctorProfile(button.dataset.id);
-  }
+    if (isSlotBooked(doctor.id, currentSearch.date, time)) {
+      alert("This demo slot has already been booked in this browser. Choose another slot.");
+      renderDoctors(getFilteredDoctors(), currentSearch.date);
+      return;
+    }
 
-  if (button.dataset.action === "book") {
-    chooseDoctorForBooking(button.dataset.id);
-  }
-});
+    const booking = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      patientName: currentSearch.patientName,
+      patientEmail: currentSearch.patientEmail,
+      doctorId: doctor.id,
+      doctorName: doctor.name,
+      specialty: doctor.specialty,
+      rating: doctor.rating,
+      date: currentSearch.date,
+      time
+    };
 
-$("searchHistoryList").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-search-index]");
-  if (button) applySearchHistory(Number(button.dataset.searchIndex));
-});
+    const bookings = getBookings();
+    bookings.push(booking);
 
-$("viewedHistoryList").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-viewed-id]");
-  if (!button) return;
+    if (!saveBookings(bookings)) return;
 
-  const doctor = doctors.find((item) => item.id === button.dataset.viewedId);
-  if (!doctor) return;
+    confirmationDetails.innerHTML = `
+      <p><strong>Patient:</strong> ${escapeHTML(booking.patientName)}</p>
+      <p><strong>Doctor:</strong> ${escapeHTML(booking.doctorName)}</p>
+      <p><strong>Specialty:</strong> ${escapeHTML(booking.specialty)}</p>
+      <p><strong>Date:</strong> ${escapeHTML(formatDate(booking.date))}</p>
+      <p><strong>Time:</strong> ${escapeHTML(formatTime(booking.time))}</p>
+      <p><strong>Demo reference:</strong> ${escapeHTML(booking.id)}</p>
+    `;
 
-  searchInput.value = doctor.name;
-  specialtyFilter.value = "";
-  renderDoctors();
-  openDoctorProfile(doctor.id);
-});
+    confirmationSection.hidden = false;
+    resultsSection.hidden = true;
+    renderHistory();
 
-$("clearSearchHistory").addEventListener("click", () => {
-  writeHistory(STORAGE.searches, []);
+    confirmationSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+
+  document.getElementById("newSearchButton").addEventListener("click", () => {
+    confirmationSection.hidden = true;
+    resultsSection.hidden = true;
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  updateDoctorOptions();
   renderHistory();
 });
-
-$("clearViewedHistory").addEventListener("click", () => {
-  writeHistory(STORAGE.viewed, []);
-  renderHistory();
-});
-
-$("bookingForm").addEventListener("submit", scheduleAppointment);
-
-// Initial page setup
-setMinimumDate();
-renderDoctors();
-renderHistory();
-```
