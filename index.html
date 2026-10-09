@@ -1,68 +1,164 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Hospital Appointment Scheduler</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Medi Slot - Search doctors, explore reviews and schedule appointments.">
+  <title>Medi Slot | AI Doctor Booking</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
-
 <body>
+  <header class="site-header">
+    <a href="#" class="logo">💙 Medi Slot</a>
+    <nav>
+      <a href="#search">Find Doctors</a>
+      <a href="#history">Search History</a>
+      <a href="#booking">Book Appointment</a>
+    </nav>
+  </header>
 
-    <h1>AI Hospital Appointment Scheduler</h1>
+  <main>
+    <section class="hero">
+      <span class="eyebrow">SMARTER HEALTHCARE</span>
+      <h1>Find the right doctor.<br><span>Book with confidence.</span></h1>
+      <p>Explore doctor profiles, compare ratings and find an appointment that works for you.</p>
+      <a class="primary-button" href="#search">Explore Doctors</a>
+    </section>
 
-    <p>
-        Book your appointment with our AI-assisted scheduling system.
-    </p>
+    <section id="search" class="section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">DOCTOR DIRECTORY</span>
+          <h2>Find your doctor</h2>
+          <p>Search by name or medical specialization.</p>
+        </div>
+      </div>
 
-    <hr>
+      <div class="search-panel">
+        <label for="doctorSearch">Doctor name or keyword</label>
+        <input id="doctorSearch" type="search" placeholder="e.g. Rahul Sharma, heart, skin">
 
-    <h2>Patient Information</h2>
-
-    <form>
-
-        <label>Patient Name:</label><br>
-        <input type="text" id="patientName" placeholder="Enter your name">
-        <br><br>
-
-        <label>Age:</label><br>
-        <input type="number" id="age" placeholder="Enter your age">
-        <br><br>
-
-        <label>Choose Specialization:</label><br>
-        <select id="specialization">
-            <option value="">Select Doctor Specialization</option>
-            <option value="General Physician">General Physician</option>
-            <option value="Cardiologist">Cardiologist</option>
-            <option value="Dermatologist">Dermatologist</option>
-            <option value="Dentist">Dentist</option>
-            <option value="Pediatrician">Pediatrician</option>
+        <label for="specialtyFilter">Specialization</label>
+        <select id="specialtyFilter">
+          <option value="">All specializations</option>
+          <option>General Physician</option>
+          <option>Cardiologist</option>
+          <option>Dermatologist</option>
+          <option>Dentist</option>
+          <option>Pediatrician</option>
         </select>
 
-        <br><br>
+        <label for="sortDoctors">Sort doctors</label>
+        <select id="sortDoctors">
+          <option value="recommended">Recommended order</option>
+          <option value="rating">Highest rating</option>
+          <option value="fee-low">Lowest consultation fee</option>
+          <option value="experience">Most experience</option>
+        </select>
 
-        <label>Preferred Date:</label><br>
-        <input type="date" id="date">
-        <br><br>
+        <button id="clearSearch" class="secondary-button" type="button">Clear filters</button>
+      </div>
 
-        <label>Preferred Time:</label><br>
-        <input type="time" id="time">
-        <br><br>
+      <p id="resultsCount" class="muted" aria-live="polite"></p>
+      <div id="doctorList" class="doctor-grid"></div>
+      <p class="demo-notice">Demo project: doctor details, fees, ratings and reviews are illustrative and are not verified medical-provider information.</p>
+    </section>
 
-        <button type="button" onclick="scheduleAppointment()">
-            Find Best Slot
-        </button>
+    <section id="history" class="section tinted-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">YOUR ACTIVITY</span>
+          <h2>Search history</h2>
+          <p>Return to a previous search or a doctor you viewed.</p>
+        </div>
+      </div>
 
-    </form>
+      <div class="history-columns">
+        <div class="history-card">
+          <div class="history-title">
+            <h3>Recent searches</h3>
+            <button id="clearSearchHistory" class="text-button" type="button">Clear</button>
+          </div>
+          <ul id="searchHistoryList" class="history-list"></ul>
+        </div>
 
-    <hr>
+        <div class="history-card">
+          <div class="history-title">
+            <h3>Recently viewed doctors</h3>
+            <button id="clearViewedHistory" class="text-button" type="button">Clear</button>
+          </div>
+          <ul id="viewedHistoryList" class="history-list"></ul>
+        </div>
+      </div>
+      <p class="muted small-text">History is stored only in this browser on this device. It is not a patient account or a secure medical record.</p>
+    </section>
 
-    <h2>AI Scheduling Recommendation</h2>
+    <section id="booking" class="section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">APPOINTMENT PLANNER</span>
+          <h2>Book an appointment</h2>
+          <p>Choose a doctor and preferred time to get a scheduling recommendation.</p>
+        </div>
+      </div>
 
-    <div id="result">
-        Your recommended appointment will appear here.
-    </div>
+      <form id="bookingForm" class="booking-form">
+        <div class="form-grid">
+          <div>
+            <label for="patientName">Patient name</label>
+            <input id="patientName" name="patientName" maxlength="80" required>
+          </div>
+          <div>
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="1" max="120" required>
+          </div>
+          <div>
+            <label for="specialization">Specialization</label>
+            <select id="specialization" name="specialization" required>
+              <option value="">Choose specialization</option>
+              <option>General Physician</option>
+              <option>Cardiologist</option>
+              <option>Dermatologist</option>
+              <option>Dentist</option>
+              <option>Pediatrician</option>
+            </select>
+          </div>
+          <div>
+            <label for="date">Preferred date</label>
+            <input id="date" name="date" type="date" required>
+          </div>
+          <div>
+            <label for="time">Preferred time</label>
+            <select id="time" name="time" required>
+              <option value="">Choose a time</option>
+              <option value="09:00">9:00 AM</option>
+              <option value="09:30">9:30 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="10:30">10:30 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+              <option value="12:00">12:00 PM</option>
+              <option value="12:30">12:30 PM</option>
+            </select>
+          </div>
+        </div>
+        <button class="primary-button" type="submit">Find Recommended Slot</button>
+      </form>
+      <div id="result" class="result-box" aria-live="polite"></div>
+    </section>
 
-    <script src="script.js"></script>
+    <section class="section review-note">
+      <h2>Patient feedback matters</h2>
+      <p>Reviews in this demo are examples to show how the interface works. A production system should collect genuine feedback from verified patients and protect their personal information.</p>
+    </section>
+  </main>
 
+  <footer>
+    <p>© 2026 Medi Slot · Student project · Demo information only</p>
+  </footer>
 </body>
 </html>
+```
+
