@@ -342,3 +342,140 @@ footer {
     font-size: 21px;
   }
 }
+
+/* MediSlot AI Health Assistant */
+
+.health-chat-panel {
+  margin-top: 24px;
+}
+
+.chat-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.chat-heading h2 {
+  margin-bottom: 8px;
+}
+
+.chat-icon {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 14px;
+  background: #e0f2ed;
+  color: #087b65;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.chat-safety-note {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid #e7d8a5;
+  border-radius: 10px;
+  background: #fff9e8;
+  color: #65521d;
+  font-size: 13px;
+}
+
+.health-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  min-height: 180px;
+  max-height: 430px;
+  overflow-y: auto;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #f7fafc;
+}
+
+.health-chat-message {
+  max-width: 90%;
+  padding: 13px 15px;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.health-chat-message strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.health-chat-message p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.ai-message {
+  align-self: flex-start;
+  border: 1px solid #d8e8e8;
+  background: #ffffff;
+  color: var(--text);
+}
+
+.ai-message strong {
+  color: #176b87;
+}
+
+.user-message {
+  align-self: flex-end;
+  background: #dff3ef;
+  color: #173d42;
+}
+
+.user-message strong {
+  color: #126b64;
+}
+
+.health-chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.health-chat-form textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 13px;
+  border: 1px solid #cbd9e1;
+  border-radius: 10px;
+  color: var(--text);
+  background: white;
+  font: inherit;
+  font-size: 14px;
+}
+
+.health-chat-form textarea:focus {
+  outline: 3px solid #a5e5df;
+  outline-offset: 2px;
+}
+
+.health-chat-form .primary-button {
+  margin-top: 4px;
+}
+
+.health-chat-form button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 650px) {
+  .health-chat-panel {
+    padding: 18px;
+  }
+
+  .health-chat-message {
+    max-width: 100%;
+  }
+}
