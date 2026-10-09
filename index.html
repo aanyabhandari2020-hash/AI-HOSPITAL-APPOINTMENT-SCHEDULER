@@ -1,164 +1,144 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Medi Slot - Search doctors, explore reviews and schedule appointments.">
-  <title>Medi Slot | AI Doctor Booking</title>
+  <title>MediSlot AI | Smart Appointment Booking</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <a href="#" class="logo">💙 Medi Slot</a>
-    <nav>
-      <a href="#search">Find Doctors</a>
-      <a href="#history">Search History</a>
-      <a href="#booking">Book Appointment</a>
-    </nav>
+  <header class="hero">
+    <div class="brand">✚ MediSlot <span>AI</span></div>
+    <p class="eyebrow">SMART HEALTHCARE SCHEDULING</p>
+    <h1>Your health. Your doctor. Your time.</h1>
+    <p>Find a doctor, compare ratings and choose an appointment slot.</p>
   </header>
 
-  <main>
-    <section class="hero">
-      <span class="eyebrow">SMARTER HEALTHCARE</span>
-      <h1>Find the right doctor.<br><span>Book with confidence.</span></h1>
-      <p>Explore doctor profiles, compare ratings and find an appointment that works for you.</p>
-      <a class="primary-button" href="#search">Explore Doctors</a>
-    </section>
-
-    <section id="search" class="section">
+  <main class="container">
+    <section class="panel">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">DOCTOR DIRECTORY</span>
-          <h2>Find your doctor</h2>
-          <p>Search by name or medical specialization.</p>
+          <p class="eyebrow">STEP 1</p>
+          <h2>Find your preferred doctor</h2>
         </div>
+        <span class="pill">Demo booking system</span>
       </div>
 
-      <div class="search-panel">
-        <label for="doctorSearch">Doctor name or keyword</label>
-        <input id="doctorSearch" type="search" placeholder="e.g. Rahul Sharma, heart, skin">
-
-        <label for="specialtyFilter">Specialization</label>
-        <select id="specialtyFilter">
-          <option value="">All specializations</option>
-          <option>General Physician</option>
-          <option>Cardiologist</option>
-          <option>Dermatologist</option>
-          <option>Dentist</option>
-          <option>Pediatrician</option>
-        </select>
-
-        <label for="sortDoctors">Sort doctors</label>
-        <select id="sortDoctors">
-          <option value="recommended">Recommended order</option>
-          <option value="rating">Highest rating</option>
-          <option value="fee-low">Lowest consultation fee</option>
-          <option value="experience">Most experience</option>
-        </select>
-
-        <button id="clearSearch" class="secondary-button" type="button">Clear filters</button>
-      </div>
-
-      <p id="resultsCount" class="muted" aria-live="polite"></p>
-      <div id="doctorList" class="doctor-grid"></div>
-      <p class="demo-notice">Demo project: doctor details, fees, ratings and reviews are illustrative and are not verified medical-provider information.</p>
-    </section>
-
-    <section id="history" class="section tinted-section">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">YOUR ACTIVITY</span>
-          <h2>Search history</h2>
-          <p>Return to a previous search or a doctor you viewed.</p>
-        </div>
-      </div>
-
-      <div class="history-columns">
-        <div class="history-card">
-          <div class="history-title">
-            <h3>Recent searches</h3>
-            <button id="clearSearchHistory" class="text-button" type="button">Clear</button>
-          </div>
-          <ul id="searchHistoryList" class="history-list"></ul>
-        </div>
-
-        <div class="history-card">
-          <div class="history-title">
-            <h3>Recently viewed doctors</h3>
-            <button id="clearViewedHistory" class="text-button" type="button">Clear</button>
-          </div>
-          <ul id="viewedHistoryList" class="history-list"></ul>
-        </div>
-      </div>
-      <p class="muted small-text">History is stored only in this browser on this device. It is not a patient account or a secure medical record.</p>
-    </section>
-
-    <section id="booking" class="section">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">APPOINTMENT PLANNER</span>
-          <h2>Book an appointment</h2>
-          <p>Choose a doctor and preferred time to get a scheduling recommendation.</p>
-        </div>
-      </div>
-
-      <form id="bookingForm" class="booking-form">
+      <form id="appointmentForm">
         <div class="form-grid">
-          <div>
-            <label for="patientName">Patient name</label>
-            <input id="patientName" name="patientName" maxlength="80" required>
+          <div class="field">
+            <label for="patientName">Patient's full name *</label>
+            <input id="patientName" name="patientName"
+              type="text" placeholder="Enter patient name"
+              autocomplete="name" required maxlength="80">
           </div>
-          <div>
-            <label for="age">Age</label>
-            <input id="age" name="age" type="number" min="1" max="120" required>
+
+          <div class="field">
+            <label for="patientEmail">Email address</label>
+            <input id="patientEmail" name="patientEmail"
+              type="email" placeholder="you@example.com"
+              autocomplete="email">
           </div>
-          <div>
-            <label for="specialization">Specialization</label>
-            <select id="specialization" name="specialization" required>
-              <option value="">Choose specialization</option>
-              <option>General Physician</option>
-              <option>Cardiologist</option>
-              <option>Dermatologist</option>
-              <option>Dentist</option>
-              <option>Pediatrician</option>
+
+          <div class="field">
+            <label for="specialty">Medical specialty *</label>
+            <select id="specialty" name="specialty" required>
+              <option value="All">Any specialty</option>
+              <option value="General Physician">General Physician</option>
+              <option value="Cardiologist">Cardiologist</option>
+              <option value="Dermatologist">Dermatologist</option>
+              <option value="Dentist">Dentist</option>
+              <option value="Pediatrician">Pediatrician</option>
             </select>
           </div>
-          <div>
-            <label for="date">Preferred date</label>
-            <input id="date" name="date" type="date" required>
+
+          <div class="field">
+            <label for="preferredDoctor">Preferred doctor</label>
+            <select id="preferredDoctor" name="preferredDoctor">
+              <option value="Any">Any available doctor</option>
+            </select>
           </div>
-          <div>
-            <label for="time">Preferred time</label>
-            <select id="time" name="time" required>
-              <option value="">Choose a time</option>
-              <option value="09:00">9:00 AM</option>
-              <option value="09:30">9:30 AM</option>
-              <option value="10:00">10:00 AM</option>
-              <option value="10:30">10:30 AM</option>
-              <option value="11:00">11:00 AM</option>
-              <option value="11:30">11:30 AM</option>
-              <option value="12:00">12:00 PM</option>
-              <option value="12:30">12:30 PM</option>
+
+          <div class="field">
+            <label for="ratingPreference">Rating preference</label>
+            <select id="ratingPreference" name="ratingPreference">
+              <option value="any">Any rating</option>
+              <option value="4">Rated 4.0 or higher</option>
+              <option value="4.5">Rated 4.5 or higher</option>
+              <option value="highest">Highest rated first</option>
+              <option value="most">Most reviewed first</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="appointmentDate">Preferred date *</label>
+            <input id="appointmentDate" name="appointmentDate"
+              type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="timePreference">Preferred time</label>
+            <select id="timePreference" name="timePreference">
+              <option value="any">Any available time</option>
+              <option value="morning">Morning (9 AM–12 PM)</option>
+              <option value="afternoon">Afternoon (12 PM–5 PM)</option>
             </select>
           </div>
         </div>
-        <button class="primary-button" type="submit">Find Recommended Slot</button>
+
+        <button class="primary-button" type="submit">
+          Find Available Doctors & Slots
+        </button>
+        <p class="helper">* Required fields. Doctor profiles and ratings are sample data for this project demo.</p>
       </form>
-      <div id="result" class="result-box" aria-live="polite"></div>
     </section>
 
-    <section class="section review-note">
-      <h2>Patient feedback matters</h2>
-      <p>Reviews in this demo are examples to show how the interface works. A production system should collect genuine feedback from verified patients and protect their personal information.</p>
+    <section id="resultsSection" class="panel" hidden>
+      <p class="eyebrow">STEP 2</p>
+      <h2>Recommended doctors & available slots</h2>
+      <p id="resultsMessage" class="helper" aria-live="polite"></p>
+      <div id="doctorResults" class="doctor-grid"></div>
     </section>
+
+    <section id="confirmationSection" class="panel confirmation" hidden
+      aria-live="polite">
+      <div class="success-icon">✓</div>
+      <p class="eyebrow">BOOKING CONFIRMATION</p>
+      <h2>Appointment booked successfully!</h2>
+      <div id="confirmationDetails"></div>
+      <p class="helper">
+        This is a browser-based demo confirmation, not a real hospital booking.
+      </p>
+      <button id="newSearchButton" class="secondary-button" type="button">
+        Find another appointment
+      </button>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">YOUR ACTIVITY</p>
+          <h2>Appointments saved on this browser</h2>
+        </div>
+      </div>
+      <p class="helper">
+        Demo bookings are stored in this browser only.
+        They are not shared with a hospital or other users.
+      </p>
+      <div id="bookingHistory"></div>
+    </section>
+
+    <p class="disclaimer">
+      MediSlot AI is a student project demonstration. Doctor details,
+      ratings and availability are illustrative, not verified medical
+      information. No real appointment is made with a healthcare provider.
+    </p>
   </main>
 
   <footer>
-    <p>© 2026 Medi Slot · Student project · Demo information only</p>
+    MediSlot AI · Smart scheduling project
   </footer>
 </body>
 </html>
-```
-
