@@ -4,213 +4,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MediSlot AI doctor appointment booking project">
   <title>MediSlot AI | Doctor Appointment Booking</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="#">
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="MediSlot AI home">
       <span class="brand-icon">✚</span>
       <span>MediSlot <span class="brand-ai">AI</span></span>
     </a>
-    <span class="header-tag">Your health, your time.</span>
+    <span class="header-tag">SMART APPOINTMENT BOOKING</span>
   </header>
 
-  <main class="container">
+  <main class="page-container">
     <section class="hero">
-      <span class="eyebrow">SMART HEALTHCARE BOOKING</span>
-      <h1>Find the right doctor.<br><span>Book with confidence.</span></h1>
-      <p>Explore doctors, compare ratings, choose a convenient time, and confirm your appointment in a few simple steps.</p>
+      <span class="eyebrow">YOUR HEALTH, YOUR TIME</span>
+      <h1>MediSlot AI Slot Booking</h1>
+      <p>Find your preferred doctor, choose a convenient slot,
+        and book your consultation in a few simple steps.</p>
     </section>
 
-    <section class="panel" id="searchSection">
-      <div class="section-heading">
-        <div>
-          <span class="step-label">STEP 1</span>
-          <h2>Find your doctor</h2>
+    <section class="booking-panel">
+      <div class="stepper" aria-label="Booking progress">
+        <div class="step active" data-step-indicator="1">
+          <span class="step-number">1</span>
+          <span>Preferences</span>
         </div>
-        <span class="small-note">All consultation fees: ₹800</span>
+        <span class="step-line"></span>
+        <div class="step" data-step-indicator="2">
+          <span class="step-number">2</span>
+          <span>Doctor & Slot</span>
+        </div>
+        <span class="step-line"></span>
+        <div class="step" data-step-indicator="3">
+          <span class="step-number">3</span>
+          <span>Patient Details</span>
+        </div>
       </div>
 
-      <form id="searchForm">
-        <div class="form-grid">
+      <form id="bookingForm" novalidate>
+
+        <!-- STEP 1: APPOINTMENT PREFERENCES -->
+        <section class="form-step active" id="step1">
+          <div class="section-heading">
+            <span class="section-icon">01</span>
+            <div>
+              <h2>Appointment Preferences</h2>
+              <p>Tell us what kind of doctor you are looking for.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="specialty">Type of Doctor *</label>
+              <select id="specialty" name="specialty" required>
+                <option value="">Select a medical specialty</option>
+                <option>Cardiologist</option>
+                <option>Dermatologist</option>
+                <option>General Physician</option>
+                <option>Neurologist</option>
+                <option>Orthopedist</option>
+                <option>Pediatrician</option>
+                <option>Gynecologist</option>
+                <option>Ophthalmologist</option>
+                <option>Dentist</option>
+                <option>Psychiatrist</option>
+                <option>ENT Specialist</option>
+                <option>Endocrinologist</option>
+              </select>
+            </div>
+
+            <div class="field full-width">
+              <label for="preferredDoctor">Preferred Doctor *</label>
+              <select id="preferredDoctor" name="preferredDoctor" required>
+                <option value="">Select a doctor</option>
+              </select>
+              <small>Doctor ratings and recommendation levels are shown in this list.</small>
+            </div>
+
+            <div class="field full-width">
+              <label for="ratingPreference">Preferred Rating Category</label>
+              <select id="ratingPreference" name="ratingPreference">
+                <option value="all">Any rating</option>
+                <option value="highly">Highly Recommended (4.5–5.0)</option>
+                <option value="above">Above Average (4.0–4.4)</option>
+                <option value="average">Average (3.0–3.9)</option>
+                <option value="below">Below Average (below 3.0)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="preferredDate">Preferred Date *</label>
+              <input type="date" id="preferredDate" name="preferredDate" required>
+            </div>
+
+            <div class="field">
+              <label for="preferredTime">Preferred Time Slot *</label>
+              <select id="preferredTime" name="preferredTime" required>
+                <option value="">Select a time</option>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+                <option value="04:00 PM">04:00 PM</option>
+                <option value="05:00 PM">05:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="notice">
+            <span>ⓘ</span>
+            <p>This is a demonstration project. The doctors and their ratings
+              are fictional and are not verified medical recommendations.</p>
+          </div>
+
+          <div class="form-actions">
+            <span class="required-note">* Required fields</span>
+            <button type="button" class="btn btn-primary" id="toStep2">
+              Find Doctors <span>→</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- STEP 2: DOCTOR LIST AND SLOT SELECTION -->
+        <section class="form-step" id="step2" hidden>
+          <div class="section-heading">
+            <span class="section-icon">02</span>
+            <div>
+              <h2>Choose Your Doctor & Slot</h2>
+              <p>Compare the available sample profiles and choose a time.</p>
+            </div>
+          </div>
+
+          <div class="selection-summary" id="selectionSummary"></div>
+
           <div class="field">
-            <label for="specialty">Type of doctor</label>
-            <select id="specialty" required>
-              <option value="All">All specialties</option>
-              <option value="General Physician">General Physician</option>
-              <option value="Cardiologist">Cardiologist</option>
-              <option value="Radiologist">Radiologist</option>
-              <option value="Dermatologist">Dermatologist</option>
-              <option value="Dentist">Dentist</option>
-              <option value="Pediatrician">Pediatrician</option>
-              <option value="Neurologist">Neurologist</option>
-              <option value="Orthopedic">Orthopedic</option>
-              <option value="Gynecologist">Gynecologist</option>
-              <option value="Ophthalmologist">Ophthalmologist</option>
+            <label for="doctorSearch">Search Doctor by Name</label>
+            <input type="search" id="doctorSearch" placeholder="Type a doctor's name">
+          </div>
+
+          <div id="doctorList" class="doctor-list" aria-live="polite"></div>
+
+          <div class="field slot-field">
+            <label for="chosenSlot">Select Your Appointment Slot *</label>
+            <select id="chosenSlot" required>
+              <option value="">Select a slot</option>
             </select>
+            <small>Choose a slot from the available sample timings.</small>
           </div>
 
-          <div class="field">
-            <label for="preferredDoctor">Preferred doctor</label>
-            <select id="preferredDoctor">
-              <option value="All">Any available doctor</option>
-            </select>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="backToStep1">
+              ← Back
+            </button>
+            <button type="button" class="btn btn-primary" id="toStep3">
+              Next: Patient Details →
+            </button>
+          </div>
+        </section>
+
+        <!-- STEP 3: PATIENT DETAILS -->
+        <section class="form-step" id="step3" hidden>
+          <div class="section-heading">
+            <span class="section-icon">03</span>
+            <div>
+              <h2>Patient Details</h2>
+              <p>Enter the details for this demonstration booking.</p>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="appointmentDate">Appointment date</label>
-            <input id="appointmentDate" type="date" required>
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="patientName">Patient's Full Name *</label>
+              <input type="text" id="patientName" name="patientName"
+                placeholder="Enter your full name" autocomplete="name"
+                minlength="2" maxlength="80" required>
+            </div>
+
+            <div class="field">
+              <label for="patientEmail">Email Address *</label>
+              <input type="email" id="patientEmail" name="patientEmail"
+                placeholder="you@example.com" autocomplete="email"
+                maxlength="120" required>
+            </div>
+
+            <div class="field">
+              <label for="patientPhone">Phone Number *</label>
+              <input type="tel" id="patientPhone" name="patientPhone"
+                placeholder="10-digit mobile number" autocomplete="tel"
+                inputmode="numeric" pattern="[6-9][0-9]{9}"
+                maxlength="10" required>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="appointmentTime">Preferred time slot</label>
-            <select id="appointmentTime" required>
-              <option value="">Choose a time slot</option>
-              <option value="09:00 AM - 12:00 PM">09:00 AM – 12:00 PM</option>
-              <option value="12:00 PM - 03:00 PM">12:00 PM – 03:00 PM</option>
-              <option value="03:00 PM - 06:00 PM">03:00 PM – 06:00 PM</option>
-              <option value="06:00 PM - 09:00 PM">06:00 PM – 09:00 PM</option>
-            </select>
-          </div>
-        </div>
+          <div id="finalSummary" class="final-summary"></div>
 
-        <button class="btn btn-primary btn-full" type="submit">Search Doctors →</button>
+          <div class="notice">
+            <span>🔒</span>
+            <p>This static demo does not send or store your details on a server.
+              Use fictional details when testing it.</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="backToStep2">
+              ← Back
+            </button>
+            <button type="submit" class="btn btn-primary" id="submitBooking">
+              Confirm Booking · ₹800
+            </button>
+          </div>
+        </section>
       </form>
-      <p class="helper-text">Choose your specialty, date, and preferred time to view matching doctors.</p>
-    </section>
 
-    <section class="results-section" id="resultsSection" hidden>
-      <div class="section-heading results-heading">
-        <div>
-          <span class="step-label">STEP 2</span>
-          <h2>Choose your doctor</h2>
-          <p id="resultsSummary" class="muted"></p>
-        </div>
-        <select id="sortRating" aria-label="Sort doctors">
-          <option value="recommended">Recommended first</option>
-          <option value="rating">Highest rated</option>
-          <option value="reviews">Most reviewed</option>
-        </select>
-      </div>
-      <div id="doctorResults" class="doctor-grid"></div>
-    </section>
+      <!-- BOOKING RECEIPT -->
+      <section id="receipt" class="receipt" hidden aria-live="polite">
+        <div class="success-icon">✓</div>
+        <span class="eyebrow">DEMO BOOKING CONFIRMATION</span>
+        <h2>Slot Successfully Booked!</h2>
+        <p class="receipt-message">
+          Your sample appointment has been confirmed in this browser session.
+        </p>
 
-    <section class="panel booking-panel" id="bookingSection" hidden>
-      <div class="section-heading">
-        <div>
-          <span class="step-label">STEP 3</span>
-          <h2>Your details</h2>
-        </div>
-        <span class="fee-pill">₹800 consultation</span>
-      </div>
-
-      <div id="selectedDoctorSummary" class="selected-doctor-summary"></div>
-
-      <form id="bookingForm">
-        <div class="form-grid">
-          <div class="field">
-            <label for="patientName">Full name</label>
-            <input id="patientName" name="patientName" type="text" placeholder="Enter your full name" autocomplete="name" required maxlength="100">
-          </div>
-
-          <div class="field">
-            <label for="patientEmail">Email address</label>
-            <input id="patientEmail" name="patientEmail" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="150">
-          </div>
-
-          <div class="field">
-            <label for="patientPhone">Phone number</label>
-            <input id="patientPhone" name="patientPhone" type="tel" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit phone number" required>
-          </div>
-
-          <div class="field">
-            <label for="bookingDateDisplay">Appointment date</label>
-            <input id="bookingDateDisplay" type="text" readonly>
-          </div>
-
-          <div class="field">
-            <label for="bookingTimeDisplay">Appointment time</label>
-            <input id="bookingTimeDisplay" type="text" readonly>
-          </div>
-
-          <div class="field">
-            <label for="bookingFee">Consultation fee</label>
-            <input id="bookingFee" type="text" value="₹800" readonly>
-          </div>
+        <div class="receipt-number">
+          <span>Booking Reference</span>
+          <strong id="bookingReference"></strong>
         </div>
 
-        <p id="bookingError" class="error-message" role="alert" hidden></p>
-        <button class="btn btn-primary btn-full" type="submit">Confirm Appointment</button>
-        <p class="helper-text">Please check your details before confirming.</p>
-      </form>
-    </section>
+        <div id="receiptDetails" class="receipt-details"></div>
 
-    <section class="panel receipt-panel" id="receiptSection" hidden>
-      <div id="receiptContent">
-        <div class="receipt-success">
-          <span class="success-icon">✓</span>
-          <div>
-            <h2>Appointment confirmed!</h2>
-            <p>Your appointment summary is ready.</p>
-          </div>
+        <div class="fee-row">
+          <span>Consultation Fee</span>
+          <strong>₹800</strong>
         </div>
-
-        <div class="receipt-brand">
-          <div>
-            <h2>MediSlot AI</h2>
-            <p>Doctor Appointment Receipt</p>
-          </div>
-          <span class="paid-label">BOOKING CONFIRMED</span>
-        </div>
-
-        <div class="receipt-id-row">
-          <span>Appointment ID</span>
-          <strong id="receiptId"></strong>
-        </div>
-
-        <div class="receipt-details">
-          <div><span>Patient name</span><strong id="receiptName"></strong></div>
-          <div><span>Email</span><strong id="receiptEmail"></strong></div>
-          <div><span>Phone</span><strong id="receiptPhone"></strong></div>
-          <div><span>Doctor</span><strong id="receiptDoctor"></strong></div>
-          <div><span>Specialty</span><strong id="receiptSpecialty"></strong></div>
-          <div><span>Date</span><strong id="receiptDate"></strong></div>
-          <div><span>Time slot</span><strong id="receiptTime"></strong></div>
-          <div><span>Doctor rating</span><strong id="receiptRating"></strong></div>
-        </div>
-
-        <div class="receipt-total">
-          <span>Consultation fee</span>
+        <div class="fee-row total-row">
+          <span>Total Amount</span>
           <strong>₹800</strong>
         </div>
 
-        <p class="receipt-disclaimer">This is a demonstration booking receipt. It is not a hospital-issued invoice or proof of payment.</p>
-        <p class="receipt-generated">Generated on <span id="receiptGenerated"></span></p>
-      </div>
+        <p class="receipt-footnote">
+          No payment has been collected. This receipt is for a college project demo.
+        </p>
 
-      <div class="receipt-actions no-print">
-        <button id="printReceipt" class="btn btn-primary" type="button">Print / Save as PDF</button>
-        <button id="newBooking" class="btn btn-secondary" type="button">Book Another Appointment</button>
-      </div>
-    </section>
-
-    <section class="panel history-panel" id="historySection">
-      <div class="section-heading">
-        <div>
-          <span class="step-label">YOUR ACTIVITY</span>
-          <h2>Saved appointments</h2>
+        <div class="form-actions receipt-actions">
+          <button type="button" class="btn btn-secondary" id="printReceipt">
+            Print Receipt
+          </button>
+          <button type="button" class="btn btn-primary" id="newBooking">
+            New Booking
+          </button>
         </div>
-        <button id="clearAppointments" class="btn btn-secondary btn-small" type="button">Clear history</button>
-      </div>
-      <p class="helper-text">Appointments confirmed in this browser appear here.</p>
-      <div id="appointmentHistory" class="history-list"></div>
+      </section>
     </section>
 
-    <p class="disclaimer">MediSlot AI is a demonstration project. Doctor profiles, ratings, time slots, and bookings are sample information, not live medical services.</p>
+    <footer>
+      <p>© 2026 MediSlot AI · Academic Demonstration Project</p>
+      <p>Fictional doctor data · Not for real medical bookings</p>
+    </footer>
   </main>
-
-  <footer class="site-footer">© 2026 MediSlot AI · A healthcare appointment booking demo</footer>
 </body>
 </html>
