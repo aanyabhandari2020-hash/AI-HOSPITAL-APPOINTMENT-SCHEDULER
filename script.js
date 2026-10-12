@@ -1,583 +1,664 @@
 
 "use strict";
 
-// Medi Slot doctor directory — demo data.
-const doctors = [
-  {
-    id: "gp1",
-    name: "Dr. Rahul Sharma",
-    specialty: "General Physician",
-    experience: 8,
-    fee: 800,
-    rating: 4.7,
-    avatar: "👨‍⚕️",
-    description: "General health consultations and routine check-ups.",
-    slots: ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30"],
-    reviews: [
-      { stars: 5, text: "Friendly and explained the consultation clearly.", author: "Demo patient" },
-      { stars: 4, text: "A helpful example of patient feedback.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "ca1",
-    name: "Dr. Priya Mehta",
-    specialty: "Cardiologist",
-    experience: 10,
-    fee: 800,
-    rating: 4.9,
-    avatar: "👩‍⚕️",
-    description: "Heart-health consultations and cardiovascular assessment.",
-    slots: ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30"],
-    reviews: [
-      { stars: 5, text: "Clear explanations and a professional approach.", author: "Demo patient" },
-      { stars: 5, text: "A sample review for the website demonstration.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "der1",
-    name: "Dr. Neha Kapoor",
-    specialty: "Dermatologist",
-    experience: 7,
-    fee: 800,
-    rating: 4.8,
-    avatar: "👩‍⚕️",
-    description: "Skin and hair consultations.",
-    slots: ["09:30", "10:00", "10:30", "11:00", "11:30", "12:00"],
-    reviews: [
-      { stars: 5, text: "The information was easy to understand.", author: "Demo patient" },
-      { stars: 4, text: "Illustrative feedback for the demo profile.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "den1",
-    name: "Dr. Arjun Verma",
-    specialty: "Dentist",
-    experience: 6,
-    fee: 800,
-    rating: 4.6,
-    avatar: "🦷",
-    description: "General dental consultations and oral-health advice.",
-    slots: ["09:00", "09:30", "10:00", "11:00", "11:30", "12:00"],
-    reviews: [
-      { stars: 5, text: "A friendly example of a dental review.", author: "Demo patient" },
-      { stars: 4, text: "Sample feedback displayed for demonstration.", author: "Demo patient" }
-    ]
-  },
-  {
-    id: "ped1",
-    name: "Dr. Anjali Singh",
-    specialty: "Pediatrician",
-    experience: 9,
-    fee: 800,
-    rating: 4.8,
-    avatar: "👩‍⚕️",
-    description: "Child-health consultations and routine check-ups.",
-    slots: ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30"],
-    reviews: [
-      { stars: 5, text: "A sample review for the pediatric profile.", author: "Demo patient" },
-      { stars: 5, text: "Example feedback for the website interface.", author: "Demo patient" }
-    ]
-  }
-];
+document.addEventListener("DOMContentLoaded", function () {
+  const CONSULTATION_FEE = 800;
+  const STORAGE_KEY = "medislot_ai_appointments_v1";
 
-const STORAGE = {
-  searches: "mediSlotSearchHistoryV1",
-  viewed: "mediSlotViewedDoctorsV1",
-  appointments: "mediSlotAppointmentsV1"
-};
-
-const $ = (id) => document.getElementById(id);
-
-const searchInput = $("doctorSearch");
-const specialtyFilter = $("specialtyFilter");
-const sortDoctors = $("sortDoctors");
-const doctorList = $("doctorList");
-const resultsCount = $("resultsCount");
-
-let currentQuery = "";
-let searchTimer = null;
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
-function readHistory(key) {
-  try {
-    const data = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeHistory(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function recordSearch(query, specialty) {
-  const label = query.trim() || "All doctors";
-  const entry = {
-    query: query.trim(),
-    specialty: specialty,
-    label: specialty ? `${label} · ${specialty}` : label,
-    date: new Date().toLocaleString()
-  };
-
-  let history = readHistory(STORAGE.searches);
-
-  history = history.filter((item) =>
-    item.query !== entry.query || item.specialty !== entry.specialty
-  );
-
-  history.unshift(entry);
-  writeHistory(STORAGE.searches, history.slice(0, 10));
-  renderHistory();
-}
-
-function recordViewed(doctorId) {
-  let history = readHistory(STORAGE.viewed);
-
-  history = history.filter((item) => item.id !== doctorId);
-  history.unshift({ id: doctorId, date: new Date().toLocaleString() });
-
-  writeHistory(STORAGE.viewed, history.slice(0, 10));
-  renderHistory();
-}
-
-function filteredDoctors() {
-  const query = searchInput.value.trim().toLowerCase();
-  const specialty = specialtyFilter.value;
-
-  let list = doctors.filter((doctor) => {
-    const matchesQuery = [
-      doctor.name,
-      doctor.specialty,
-      doctor.description
-    ].join(" ").toLowerCase().includes(query);
-
-    const matchesSpecialty = !specialty || doctor.specialty === specialty;
-
-    return matchesQuery && matchesSpecialty;
-  });
-
-  switch (sortDoctors.value) {
-    case "rating":
-      list.sort((a, b) => b.rating - a.rating);
-      break;
-    case "fee-low":
-      list.sort((a, b) => a.fee - b.fee);
-      break;
-    case "experience":
-      list.sort((a, b) => b.experience - a.experience);
-      break;
-  }
-
-  return list;
-}
-
-function renderDoctors() {
-  const list = filteredDoctors();
-
-  resultsCount.textContent =
-    `${list.length} doctor${list.length === 1 ? "" : "s"} found`;
-
-  if (!list.length) {
-    doctorList.innerHTML =
-      '<p class="muted">No matching doctors. Try another name or specialization.</p>';
-    return;
-  }
-
-  doctorList.innerHTML = list.map((doctor) => `
-    <article class="doctor-card" id="doctor-${escapeHTML(doctor.id)}">
-      <div class="doctor-top">
-        <div class="doctor-avatar" aria-hidden="true">${doctor.avatar}</div>
-        <div>
-          <h3>${escapeHTML(doctor.name)}</h3>
-          <p class="doctor-specialty">${escapeHTML(doctor.specialty)}</p>
-          <p class="doctor-rating">★ ${doctor.rating.toFixed(1)} / 5
-            <span class="muted">(${doctor.reviews.length} demo reviews)</span>
-          </p>
-        </div>
-      </div>
-
-      <p class="doctor-description">${escapeHTML(doctor.description)}</p>
-
-      <div class="doctor-details">
-        <span>🩺 Experience: ${doctor.experience} years (demo)</span>
-        <span>💳 Consultation fee: ₹800</span>
-        <span>🕒 Listed times: ${doctor.slots.map(formatTime).join(", ")}</span>
-      </div>
-
-      <div class="review-list">
-        <strong>Sample patient reviews</strong>
-        ${doctor.reviews.map((review) => `
-          <p>${"★".repeat(review.stars)}${"☆".repeat(5 - review.stars)}
-            — ${escapeHTML(review.text)}
-          </p>
-          <p class="review-author">${escapeHTML(review.author)} · Fictional demo feedback</p>
-        `).join("")}
-      </div>
-
-      <div class="card-actions">
-        <button class="secondary-button" type="button"
-          data-action="view" data-id="${escapeHTML(doctor.id)}">
-          View profile
-        </button>
-        <button class="primary-button" type="button"
-          data-action="book" data-id="${escapeHTML(doctor.id)}">
-          Book appointment
-        </button>
-      </div>
-    </article>
-  `).join("");
-}
-
-function renderHistory() {
-  const searches = readHistory(STORAGE.searches);
-  const viewed = readHistory(STORAGE.viewed);
-
-  $("searchHistoryList").innerHTML = searches.length
-    ? searches.map((item, index) => `
-        <li>
-          <button type="button" data-search-index="${index}">
-            ${escapeHTML(item.label || item.query || "All doctors")}
-          </button>
-          <div class="muted small-text">${escapeHTML(item.date || "")}</div>
-        </li>
-      `).join("")
-    : '<li class="empty-history">No previous searches yet.</li>';
-
-  $("viewedHistoryList").innerHTML = viewed.length
-    ? viewed.map((item) => {
-        const doctor = doctors.find((d) => d.id === item.id);
-        if (!doctor) return "";
-
-        return `
-          <li>
-            <button type="button" data-viewed-id="${escapeHTML(doctor.id)}">
-              ${escapeHTML(doctor.name)}
-            </button>
-            <div class="muted small-text">${escapeHTML(doctor.specialty)} · ${escapeHTML(item.date || "")}</div>
-          </li>
-        `;
-      }).join("")
-    : '<li class="empty-history">No viewed doctors yet.</li>';
-}
-
-function formatTime(time) {
-  const [hourText, minute] = time.split(":");
-  let hour = Number(hourText);
-  const period = hour >= 12 ? "PM" : "AM";
-  hour = hour % 12 || 12;
-  return `${hour}:${minute} ${period}`;
-}
-
-function convertTime(time) {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
-}
-
-function setMinimumDate() {
-  const now = new Date();
-  const localDate = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, "0"),
-    String(now.getDate()).padStart(2, "0")
-  ].join("-");
-
-  $("date").min = localDate;
-}
-
-function showBookingMessage(message) {
-  $("result").innerHTML = `
-    <div class="ai-box">
-      <h3>🤖 Medi Slot Scheduling Recommendation</h3>
-      <p>${escapeHTML(message)}</p>
-      <p class="muted small-text">
-        This is a demo recommendation, not a confirmed appointment.
-        Contact the healthcare provider to verify the actual schedule.
-      </p>
-    </div>
-  `;
-}
-
-// Create an appointment reference ID.
-function generateAppointmentId(date) {
-  const dateCode = date.replaceAll("-", "");
-  const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `MS-${dateCode}-${randomCode}`;
-}
-
-// Save appointment details in this browser.
-function saveAppointment(appointment) {
-  const appointments = readHistory(STORAGE.appointments);
-  appointments.unshift(appointment);
-  return writeHistory(STORAGE.appointments, appointments);
-}
-
-function scheduleAppointment(event) {
-  event.preventDefault();
-
-  const patientName = $("patientName").value.trim();
-  const age = Number($("age").value);
-  const specialization = $("specialization").value;
-  const date = $("date").value;
-  const preferredTime = $("time").value;
-
-  if (
-    !patientName ||
-    !Number.isInteger(age) ||
-    age < 1 ||
-    age > 120 ||
-    !specialization ||
-    !date ||
-    !preferredTime
-  ) {
-    showBookingMessage("Please enter valid details in every required field.");
-    return;
-  }
-
-  if (date < $("date").min) {
-    showBookingMessage("Please choose today or a future date.");
-    return;
-  }
-
-  const doctor = doctors.find(
-    (item) => item.specialty === specialization
-  );
-
-  if (!doctor) {
-    showBookingMessage("No doctor is listed for this specialization.");
-    return;
-  }
-
-  // Recommend the closest listed time.
-  let recommendedSlot = doctor.slots[0];
-  let smallestDifference = Infinity;
-
-  doctor.slots.forEach((slot) => {
-    const difference = Math.abs(
-      convertTime(slot) - convertTime(preferredTime)
-    );
-
-    if (difference < smallestDifference) {
-      smallestDifference = difference;
-      recommendedSlot = slot;
+  // Demonstration doctor directory. Ratings and reviews are sample data.
+  const doctors = [
+    {
+      id: "D001",
+      name: "Dr. Rahul Sharma",
+      specialty: "General Physician",
+      rating: 4.9,
+      reviews: 248,
+      experience: "12 years",
+      recommended: true,
+      description: "General health consultations and routine health concerns."
+    },
+    {
+      id: "D002",
+      name: "Dr. Priya Mehta",
+      specialty: "Cardiologist",
+      rating: 4.9,
+      reviews: 315,
+      experience: "15 years",
+      recommended: true,
+      description: "Heart health consultations and cardiovascular assessment."
+    },
+    {
+      id: "D003",
+      name: "Dr. Arjun Verma",
+      specialty: "Radiologist",
+      rating: 4.7,
+      reviews: 132,
+      experience: "10 years",
+      recommended: false,
+      description: "Radiology consultations and diagnostic imaging guidance."
+    },
+    {
+      id: "D004",
+      name: "Dr. Neha Kapoor",
+      specialty: "Dermatologist",
+      rating: 4.9,
+      reviews: 287,
+      experience: "11 years",
+      recommended: true,
+      description: "Skin, hair, and general dermatology consultations."
+    },
+    {
+      id: "D005",
+      name: "Dr. Karan Malhotra",
+      specialty: "Dentist",
+      rating: 4.6,
+      reviews: 106,
+      experience: "8 years",
+      recommended: false,
+      description: "Dental consultations and oral health guidance."
+    },
+    {
+      id: "D006",
+      name: "Dr. Anjali Singh",
+      specialty: "Pediatrician",
+      rating: 4.8,
+      reviews: 221,
+      experience: "13 years",
+      recommended: true,
+      description: "Healthcare consultations for infants, children, and teens."
+    },
+    {
+      id: "D007",
+      name: "Dr. Vikram Joshi",
+      specialty: "Neurologist",
+      rating: 4.7,
+      reviews: 154,
+      experience: "14 years",
+      recommended: false,
+      description: "Neurology consultations and nervous system health."
+    },
+    {
+      id: "D008",
+      name: "Dr. Pooja Rathore",
+      specialty: "Orthopedic",
+      rating: 4.8,
+      reviews: 193,
+      experience: "12 years",
+      recommended: true,
+      description: "Bone, joint, and musculoskeletal consultations."
+    },
+    {
+      id: "D009",
+      name: "Dr. Meera Joshi",
+      specialty: "Gynecologist",
+      rating: 4.9,
+      reviews: 276,
+      experience: "16 years",
+      recommended: true,
+      description: "Women's health and gynecology consultations."
+    },
+    {
+      id: "D010",
+      name: "Dr. Aditya Sethi",
+      specialty: "Ophthalmologist",
+      rating: 4.6,
+      reviews: 118,
+      experience: "9 years",
+      recommended: false,
+      description: "Eye health consultations and vision-related concerns."
+    },
+    {
+      id: "D011",
+      name: "Dr. Simran Gill",
+      specialty: "General Physician",
+      rating: 4.8,
+      reviews: 187,
+      experience: "9 years",
+      recommended: true,
+      description: "General consultations and preventive healthcare."
+    },
+    {
+      id: "D012",
+      name: "Dr. Rohan Bhatia",
+      specialty: "Cardiologist",
+      rating: 4.7,
+      reviews: 164,
+      experience: "10 years",
+      recommended: false,
+      description: "Cardiology consultations and heart health assessment."
     }
-  });
+  ];
 
-  const appointmentId = generateAppointmentId(date);
-  const consultationFee = 800;
+  const specialtySelect = document.getElementById("specialty");
+  const preferredDoctorSelect = document.getElementById("preferredDoctor");
+  const appointmentDate = document.getElementById("appointmentDate");
+  const appointmentTime = document.getElementById("appointmentTime");
+  const searchForm = document.getElementById("searchForm");
+  const resultsSection = document.getElementById("resultsSection");
+  const resultsSummary = document.getElementById("resultsSummary");
+  const doctorResults = document.getElementById("doctorResults");
+  const sortRating = document.getElementById("sortRating");
 
-  const formattedDate = new Date(date + "T00:00:00")
-    .toLocaleDateString("en-IN", {
+  const bookingSection = document.getElementById("bookingSection");
+  const bookingForm = document.getElementById("bookingForm");
+  const selectedDoctorSummary = document.getElementById("selectedDoctorSummary");
+  const bookingDateDisplay = document.getElementById("bookingDateDisplay");
+  const bookingTimeDisplay = document.getElementById("bookingTimeDisplay");
+  const bookingError = document.getElementById("bookingError");
+
+  const receiptSection = document.getElementById("receiptSection");
+  const appointmentHistory = document.getElementById("appointmentHistory");
+
+  let selectedDoctor = null;
+  let lastSearchResults = [];
+  let chosenDate = "";
+  let chosenTime = "";
+
+  function getLocalDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return "Not selected";
+
+    const parts = dateString.split("-").map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+      return dateString;
+    }
+
+    const date = new Date(parts[0], parts[1] - 1, parts[2]);
+    return date.toLocaleDateString("en-IN", {
       day: "numeric",
       month: "long",
       year: "numeric"
     });
+  }
 
-  const appointment = {
-    id: appointmentId,
-    patientName,
-    age,
-    doctorName: doctor.name,
-    specialization,
-    date,
-    formattedDate,
-    time: recommendedSlot,
-    fee: consultationFee,
-    status: "Suggested — not confirmed",
-    createdAt: new Date().toISOString()
-  };
+  function getAppointments() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.error("Could not read saved appointments:", error);
+      return [];
+    }
+  }
 
-  // Save the appointment summary in local browser storage.
-  const saved = saveAppointment(appointment);
+  function saveAppointments(appointments) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
+      return true;
+    } catch (error) {
+      console.error("Could not save appointments:", error);
+      return false;
+    }
+  }
 
-  $("result").innerHTML = `
-    <div class="ai-box">
-      <h3>🤖 Medi Slot Appointment Summary</h3>
+  function setTodayAsMinimum() {
+    const today = getLocalDateString(new Date());
+    appointmentDate.min = today;
+    appointmentDate.value = today;
+  }
 
-      <p>Hello <strong>${escapeHTML(patientName)}</strong>!</p>
-      <p>Your appointment summary has been generated.</p>
+  function populateDoctorDropdown() {
+    const currentSpecialty = specialtySelect.value;
+    const previousValue = preferredDoctorSelect.value || "All";
 
-      <div class="receipt-print-area" id="receipt-${escapeHTML(appointmentId)}">
-        <div class="receipt-header">
-          <h2>💙 Medi Slot</h2>
-          <h3>Appointment Receipt</h3>
-          <p>Appointment ID:<br>
-            <strong>${escapeHTML(appointmentId)}</strong>
-          </p>
-        </div>
+    const matchingDoctors = doctors.filter(function (doctor) {
+      return currentSpecialty === "All" ||
+        doctor.specialty === currentSpecialty;
+    });
 
-        <hr>
+    preferredDoctorSelect.replaceChildren();
 
-        <p><strong>Patient Name:</strong> ${escapeHTML(patientName)}</p>
-        <p><strong>Age:</strong> ${age}</p>
-        <p><strong>Doctor:</strong> ${escapeHTML(doctor.name)}</p>
-        <p><strong>Specialization:</strong> ${escapeHTML(specialization)}</p>
-        <p><strong>Appointment Date:</strong> ${escapeHTML(formattedDate)}</p>
-        <p><strong>Recommended Time:</strong> ${formatTime(recommendedSlot)}</p>
+    const anyOption = document.createElement("option");
+    anyOption.value = "All";
+    anyOption.textContent = "Any available doctor";
+    preferredDoctorSelect.appendChild(anyOption);
 
-        <hr>
+    matchingDoctors.forEach(function (doctor) {
+      const option = document.createElement("option");
+      option.value = doctor.id;
+      option.textContent = `${doctor.name} — ${doctor.specialty} (${doctor.rating.toFixed(1)}/5)`;
+      preferredDoctorSelect.appendChild(option);
+    });
 
-        <div class="receipt-total">
-          <span>Consultation Fee</span>
-          <strong>₹${consultationFee}</strong>
-        </div>
+    if (
+      previousValue !== "All" &&
+      matchingDoctors.some(function (doctor) {
+        return doctor.id === previousValue;
+      })
+    ) {
+      preferredDoctorSelect.value = previousValue;
+    } else {
+      preferredDoctorSelect.value = "All";
+    }
+  }
 
-        <p class="receipt-disclaimer">
-          Status: Suggested time — not confirmed.<br>
-          This is a demo booking summary, not a payment receipt.
-          Payment has not been collected. Please verify the schedule
-          with the healthcare provider.
-        </p>
-      </div>
+  function getStars(rating) {
+    const fullStars = Math.round(rating);
+    return "★".repeat(fullStars) + "☆".repeat(5 - fullStars);
+  }
 
-      <button type="button" id="printReceiptBtn" class="primary-button no-print">
-        🖨️ Print Receipt / Save as PDF
-      </button>
+  function renderDoctors(list) {
+    doctorResults.replaceChildren();
 
-      <p class="muted small-text no-print">
-        Use the print dialog to print or save this receipt as a PDF.
-      </p>
+    if (list.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "no-results";
+      empty.textContent =
+        "No doctors match these preferences. Try another specialty, doctor, date, or time.";
+      doctorResults.appendChild(empty);
+      return;
+    }
 
-      ${saved
-        ? '<p class="muted small-text no-print">This summary has been saved in this browser.</p>'
-        : '<p class="muted small-text no-print">Browser storage was unavailable, so this summary could not be saved.</p>'}
-    </div>
-  `;
+    list.forEach(function (doctor) {
+      const card = document.createElement("article");
+      card.className = "doctor-card";
+      if (selectedDoctor && selectedDoctor.id === doctor.id) {
+        card.classList.add("selected");
+      }
 
-  $("printReceiptBtn").addEventListener("click", () => {
+      const initials = doctor.name
+        .replace("Dr. ", "")
+        .split(" ")
+        .map(function (part) {
+          return part.charAt(0);
+        })
+        .slice(0, 2)
+        .join("");
+
+      const top = document.createElement("div");
+      top.className = "doctor-top";
+
+      const avatar = document.createElement("div");
+      avatar.className = "doctor-avatar";
+      avatar.textContent = initials;
+
+      const titleBox = document.createElement("div");
+      const name = document.createElement("h3");
+      name.className = "doctor-name";
+      name.textContent = doctor.name;
+
+      const specialty = document.createElement("p");
+      specialty.className = "doctor-specialty";
+      specialty.textContent = doctor.specialty;
+
+      titleBox.append(name, specialty);
+      top.append(avatar, titleBox);
+      card.appendChild(top);
+
+      const ratingRow = document.createElement("div");
+      ratingRow.className = "rating-row";
+
+      const stars = document.createElement("span");
+      stars.className = "stars";
+      stars.textContent = getStars(doctor.rating);
+      stars.setAttribute("aria-label", `${doctor.rating} out of 5 stars`);
+
+      const ratingNumber = document.createElement("span");
+      ratingNumber.className = "rating-number";
+      ratingNumber.textContent = doctor.rating.toFixed(1) + "/5";
+
+      const reviewCount = document.createElement("span");
+      reviewCount.className = "review-count";
+      reviewCount.textContent = `(${doctor.reviews} sample reviews)`;
+
+      ratingRow.append(stars, ratingNumber, reviewCount);
+      card.appendChild(ratingRow);
+
+      if (doctor.recommended) {
+        const badge = document.createElement("span");
+        badge.className = "recommend-badge";
+        badge.textContent = "✓ Highly Recommended";
+        card.appendChild(badge);
+      }
+
+      const description = document.createElement("p");
+      description.className = "doctor-description";
+      description.textContent = doctor.description;
+      card.appendChild(description);
+
+      const meta = document.createElement("div");
+      meta.className = "doctor-meta";
+
+      const experience = document.createElement("span");
+      experience.innerHTML = "<strong>Experience</strong><br>";
+      experience.append(document.createTextNode(doctor.experience));
+
+      const fee = document.createElement("span");
+      fee.innerHTML = "<strong>Consultation</strong><br>₹800";
+
+      meta.append(experience, fee);
+      card.appendChild(meta);
+
+      const button = document.createElement("button");
+      button.className = "btn btn-primary";
+      button.type = "button";
+      button.textContent =
+        selectedDoctor && selectedDoctor.id === doctor.id
+          ? "Selected ✓"
+          : "Select This Doctor";
+
+      button.addEventListener("click", function () {
+        chooseDoctor(doctor);
+      });
+
+      card.appendChild(button);
+      doctorResults.appendChild(card);
+    });
+  }
+
+  function chooseDoctor(doctor) {
+    selectedDoctor = doctor;
+
+    chosenDate = appointmentDate.value;
+    chosenTime = appointmentTime.value;
+
+    if (!chosenDate || !chosenTime) {
+      alert("Please choose your appointment date and time first.");
+      return;
+    }
+
+    const dateObject = new Date(chosenDate + "T00:00:00");
+    const today = new Date(getLocalDateString(new Date()) + "T00:00:00");
+
+    if (dateObject < today) {
+      alert("Please choose today or a future date.");
+      appointmentDate.focus();
+      return;
+    }
+
+    selectedDoctorSummary.replaceChildren();
+
+    const name = document.createElement("strong");
+    name.textContent = `${doctor.name} — ${doctor.specialty}`;
+
+    const details = document.createElement("p");
+    details.textContent =
+      `Rating: ${doctor.rating.toFixed(1)}/5 · ${formatDate(chosenDate)} · ${chosenTime} · Consultation fee: ₹800`;
+
+    selectedDoctorSummary.append(name, details);
+
+    bookingDateDisplay.value = formatDate(chosenDate);
+    bookingTimeDisplay.value = chosenTime;
+    bookingError.hidden = true;
+
+    resultsSection.querySelectorAll(".doctor-card").forEach(function (card) {
+      card.classList.remove("selected");
+    });
+
+    renderDoctors(lastSearchResults);
+    bookingSection.hidden = false;
+    receiptSection.hidden = true;
+    bookingSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function runSearch(event) {
+    if (event) event.preventDefault();
+
+    const date = appointmentDate.value;
+    const time = appointmentTime.value;
+    const specialty = specialtySelect.value;
+    const preferredId = preferredDoctorSelect.value;
+
+    if (!date || !time) {
+      alert("Please choose an appointment date and time slot.");
+      return;
+    }
+
+    const selectedDate = new Date(date + "T00:00:00");
+    const today = new Date(getLocalDateString(new Date()) + "T00:00:00");
+
+    if (selectedDate < today) {
+      alert("Please choose today or a future date.");
+      appointmentDate.focus();
+      return;
+    }
+
+    chosenDate = date;
+    chosenTime = time;
+    selectedDoctor = null;
+    bookingSection.hidden = true;
+    receiptSection.hidden = true;
+
+    lastSearchResults = doctors.filter(function (doctor) {
+      const specialtyMatches =
+        specialty === "All" || doctor.specialty === specialty;
+      const doctorMatches =
+        preferredId === "All" || doctor.id === preferredId;
+
+      return specialtyMatches && doctorMatches;
+    });
+
+    sortDoctors();
+    resultsSummary.textContent =
+      `${lastSearchResults.length} doctor(s) found for ${formatDate(date)} · ${time}`;
+
+    renderDoctors(lastSearchResults);
+    resultsSection.hidden = false;
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function sortDoctors() {
+    const sortMode = sortRating.value;
+
+    lastSearchResults.sort(function (a, b) {
+      if (sortMode === "rating") {
+        return b.rating - a.rating || b.reviews - a.reviews;
+      }
+
+      if (sortMode === "reviews") {
+        return b.reviews - a.reviews;
+      }
+
+      return (
+        Number(b.recommended) - Number(a.recommended) ||
+        b.rating - a.rating ||
+        b.reviews - a.reviews
+      );
+    });
+  }
+
+  function createAppointmentId() {
+    const datePart = getLocalDateString(new Date()).replaceAll("-", "");
+    const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase();
+    return `MS-${datePart}-${randomPart}`;
+  }
+
+  function showReceipt(appointment) {
+    const fields = {
+      receiptId: appointment.id,
+      receiptName: appointment.patientName,
+      receiptEmail: appointment.email,
+      receiptPhone: appointment.phone,
+      receiptDoctor: appointment.doctorName,
+      receiptSpecialty: appointment.specialty,
+      receiptDate: formatDate(appointment.date),
+      receiptTime: appointment.time,
+      receiptRating: `${appointment.rating.toFixed(1)}/5 (sample rating)`,
+      receiptGenerated: new Date(appointment.createdAt).toLocaleString("en-IN")
+    };
+
+    Object.entries(fields).forEach(function ([elementId, value]) {
+      document.getElementById(elementId).textContent = value;
+    });
+
+    receiptSection.hidden = false;
+    receiptSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderHistory() {
+    appointmentHistory.replaceChildren();
+
+    const appointments = getAppointments().slice().reverse();
+
+    if (appointments.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty-history";
+      empty.textContent = "No appointments saved in this browser yet.";
+      appointmentHistory.appendChild(empty);
+      return;
+    }
+
+    appointments.forEach(function (appointment) {
+      const item = document.createElement("div");
+      item.className = "history-item";
+
+      const details = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = `${appointment.doctorName} · ${appointment.specialty}`;
+
+      const patient = document.createElement("p");
+      patient.textContent =
+        `${appointment.patientName} · ${formatDate(appointment.date)} · ${appointment.time}`;
+
+      const id = document.createElement("span");
+      id.className = "history-id";
+      id.textContent = `Appointment ID: ${appointment.id}`;
+
+      details.append(name, patient, id);
+
+      const viewButton = document.createElement("button");
+      viewButton.className = "btn btn-secondary";
+      viewButton.type = "button";
+      viewButton.textContent = "View Receipt";
+
+      viewButton.addEventListener("click", function () {
+        showReceipt(appointment);
+      });
+
+      item.append(details, viewButton);
+      appointmentHistory.appendChild(item);
+    });
+  }
+
+  specialtySelect.addEventListener("change", function () {
+    populateDoctorDropdown();
+  });
+
+  searchForm.addEventListener("submit", runSearch);
+
+  sortRating.addEventListener("change", function () {
+    sortDoctors();
+    renderDoctors(lastSearchResults);
+  });
+
+  bookingForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    bookingError.hidden = true;
+
+    if (!selectedDoctor) {
+      bookingError.textContent = "Please select a doctor from the search results.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    if (!chosenDate || !chosenTime) {
+      bookingError.textContent = "Please search for doctors using a date and time slot.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    const patientName = document.getElementById("patientName").value.trim();
+    const email = document.getElementById("patientEmail").value.trim();
+    const phone = document.getElementById("patientPhone").value.trim();
+
+    if (!patientName || !email || !phone) {
+      bookingError.textContent = "Please fill in your name, email, and phone number.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+      bookingError.textContent = "Please enter a valid 10-digit phone number.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    const dateObject = new Date(chosenDate + "T00:00:00");
+    const today = new Date(getLocalDateString(new Date()) + "T00:00:00");
+
+    if (dateObject < today) {
+      bookingError.textContent = "Your appointment date cannot be in the past.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    const appointment = {
+      id: createAppointmentId(),
+      patientName: patientName,
+      email: email,
+      phone: phone,
+      doctorId: selectedDoctor.id,
+      doctorName: selectedDoctor.name,
+      specialty: selectedDoctor.specialty,
+      rating: selectedDoctor.rating,
+      date: chosenDate,
+      time: chosenTime,
+      fee: CONSULTATION_FEE,
+      createdAt: new Date().toISOString()
+    };
+
+    const appointments = getAppointments();
+    appointments.push(appointment);
+
+    if (!saveAppointments(appointments)) {
+      bookingError.textContent =
+        "Your browser could not save this appointment. Please check browser storage settings and try again.";
+      bookingError.hidden = false;
+      return;
+    }
+
+    renderHistory();
+    showReceipt(appointment);
+  });
+
+  document.getElementById("printReceipt").addEventListener("click", function () {
+    if (receiptSection.hidden) {
+      alert("Please confirm an appointment or open a saved receipt first.");
+      return;
+    }
+
     window.print();
   });
 
-  recordSearch(specialization, specialization);
-}
+  document.getElementById("newBooking").addEventListener("click", function () {
+    receiptSection.hidden = true;
+    bookingSection.hidden = true;
+    selectedDoctor = null;
+    bookingForm.reset();
+    searchForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
-function openDoctorProfile(doctorId) {
-  const doctor = doctors.find((item) => item.id === doctorId);
-  if (!doctor) return;
+  document.getElementById("clearAppointments").addEventListener("click", function () {
+    const appointments = getAppointments();
 
-  recordViewed(doctor.id);
-
-  const card = $(`doctor-${doctor.id}`);
-  if (card) {
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
-    card.setAttribute("tabindex", "-1");
-    card.focus({ preventScroll: true });
-  }
-}
-
-function chooseDoctorForBooking(doctorId) {
-  const doctor = doctors.find((item) => item.id === doctorId);
-  if (!doctor) return;
-
-  recordViewed(doctor.id);
-  $("specialization").value = doctor.specialty;
-  $("booking").scrollIntoView({ behavior: "smooth" });
-  $("patientName").focus({ preventScroll: true });
-}
-
-function applySearchHistory(index) {
-  const entry = readHistory(STORAGE.searches)[index];
-  if (!entry) return;
-
-  searchInput.value = entry.query || "";
-  specialtyFilter.value = entry.specialty || "";
-  currentQuery = searchInput.value;
-
-  renderDoctors();
-  $("search").scrollIntoView({ behavior: "smooth" });
-}
-
-searchInput.addEventListener("input", () => {
-  renderDoctors();
-
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    const query = searchInput.value.trim();
-    const specialty = specialtyFilter.value;
-    const signature = `${query}|${specialty}`;
-
-    if ((query || specialty) && signature !== currentQuery) {
-      currentQuery = signature;
-      recordSearch(query, specialty);
+    if (appointments.length === 0) {
+      alert("There is no saved appointment history to clear.");
+      return;
     }
-  }, 600);
-});
 
-specialtyFilter.addEventListener("change", () => {
-  renderDoctors();
-  currentQuery = `${searchInput.value.trim()}|${specialtyFilter.value}`;
-  recordSearch(searchInput.value, specialtyFilter.value);
-});
+    const confirmed = window.confirm(
+      "Clear all appointments saved by this MediSlot demo in this browser?"
+    );
 
-sortDoctors.addEventListener("change", renderDoctors);
+    if (!confirmed) return;
 
-$("clearSearch").addEventListener("click", () => {
-  searchInput.value = "";
-  specialtyFilter.value = "";
-  sortDoctors.value = "recommended";
-  currentQuery = "";
-  renderDoctors();
-  searchInput.focus();
-});
+    if (saveAppointments([])) {
+      renderHistory();
+      alert("Saved appointment history cleared.");
+    } else {
+      alert("Could not clear history. Please try again.");
+    }
+  });
 
-doctorList.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return;
-
-  if (button.dataset.action === "view") {
-    openDoctorProfile(button.dataset.id);
-  }
-
-  if (button.dataset.action === "book") {
-    chooseDoctorForBooking(button.dataset.id);
-  }
-});
-
-$("searchHistoryList").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-search-index]");
-  if (button) applySearchHistory(Number(button.dataset.searchIndex));
-});
-
-$("viewedHistoryList").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-viewed-id]");
-  if (!button) return;
-
-  const doctor = doctors.find((item) => item.id === button.dataset.viewedId);
-  if (!doctor) return;
-
-  searchInput.value = doctor.name;
-  specialtyFilter.value = "";
-  renderDoctors();
-  openDoctorProfile(doctor.id);
-});
-
-$("clearSearchHistory").addEventListener("click", () => {
-  writeHistory(STORAGE.searches, []);
+  // Start-up: initialize the page and populate the doctor dropdown.
+  setTodayAsMinimum();
+  populateDoctorDropdown();
   renderHistory();
 });
-
-$("clearViewedHistory").addEventListener("click", () => {
-  writeHistory(STORAGE.viewed, []);
-  renderHistory();
-});
-
-$("bookingForm").addEventListener("submit", scheduleAppointment);
-
-// Initial page setup
-setMinimumDate();
-renderDoctors();
-renderHistory();
