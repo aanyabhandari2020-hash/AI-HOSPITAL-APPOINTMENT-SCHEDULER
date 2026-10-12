@@ -4,141 +4,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediSlot AI | Smart Appointment Booking</title>
+  <title>MediSlot AI | Doctor Appointment Booking</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
-  <header class="hero">
-    <div class="brand">✚ MediSlot <span>AI</span></div>
-    <p class="eyebrow">SMART HEALTHCARE SCHEDULING</p>
-    <h1>Your health. Your doctor. Your time.</h1>
-    <p>Find a doctor, compare ratings and choose an appointment slot.</p>
+  <header class="site-header">
+    <a class="brand" href="#">
+      <span class="brand-icon">✚</span>
+      <span>MediSlot <span class="brand-ai">AI</span></span>
+    </a>
+    <span class="header-tag">Your health, your time.</span>
   </header>
 
   <main class="container">
-    <section class="panel">
+    <section class="hero">
+      <span class="eyebrow">SMART HEALTHCARE BOOKING</span>
+      <h1>Find the right doctor.<br><span>Book with confidence.</span></h1>
+      <p>Explore doctors, compare ratings, choose a convenient time, and confirm your appointment in a few simple steps.</p>
+    </section>
+
+    <section class="panel" id="searchSection">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">STEP 1</p>
-          <h2>Find your preferred doctor</h2>
+          <span class="step-label">STEP 1</span>
+          <h2>Find your doctor</h2>
         </div>
-        <span class="pill">Demo booking system</span>
+        <span class="small-note">All consultation fees: ₹800</span>
       </div>
 
-      <form id="appointmentForm">
+      <form id="searchForm">
         <div class="form-grid">
           <div class="field">
-            <label for="patientName">Patient's full name *</label>
-            <input id="patientName" name="patientName"
-              type="text" placeholder="Enter patient name"
-              autocomplete="name" required maxlength="80">
-          </div>
-
-          <div class="field">
-            <label for="patientEmail">Email address</label>
-            <input id="patientEmail" name="patientEmail"
-              type="email" placeholder="you@example.com"
-              autocomplete="email">
-          </div>
-
-          <div class="field">
-            <label for="specialty">Medical specialty *</label>
-            <select id="specialty" name="specialty" required>
-              <option value="All">Any specialty</option>
+            <label for="specialty">Type of doctor</label>
+            <select id="specialty" required>
+              <option value="All">All specialties</option>
               <option value="General Physician">General Physician</option>
               <option value="Cardiologist">Cardiologist</option>
+              <option value="Radiologist">Radiologist</option>
               <option value="Dermatologist">Dermatologist</option>
               <option value="Dentist">Dentist</option>
               <option value="Pediatrician">Pediatrician</option>
+              <option value="Neurologist">Neurologist</option>
+              <option value="Orthopedic">Orthopedic</option>
+              <option value="Gynecologist">Gynecologist</option>
+              <option value="Ophthalmologist">Ophthalmologist</option>
             </select>
           </div>
 
           <div class="field">
             <label for="preferredDoctor">Preferred doctor</label>
-            <select id="preferredDoctor" name="preferredDoctor">
-              <option value="Any">Any available doctor</option>
+            <select id="preferredDoctor">
+              <option value="All">Any available doctor</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="ratingPreference">Rating preference</label>
-            <select id="ratingPreference" name="ratingPreference">
-              <option value="any">Any rating</option>
-              <option value="4">Rated 4.0 or higher</option>
-              <option value="4.5">Rated 4.5 or higher</option>
-              <option value="highest">Highest rated first</option>
-              <option value="most">Most reviewed first</option>
-            </select>
+            <label for="appointmentDate">Appointment date</label>
+            <input id="appointmentDate" type="date" required>
           </div>
 
           <div class="field">
-            <label for="appointmentDate">Preferred date *</label>
-            <input id="appointmentDate" name="appointmentDate"
-              type="date" required>
-          </div>
-
-          <div class="field">
-            <label for="timePreference">Preferred time</label>
-            <select id="timePreference" name="timePreference">
-              <option value="any">Any available time</option>
-              <option value="morning">Morning (9 AM–12 PM)</option>
-              <option value="afternoon">Afternoon (12 PM–5 PM)</option>
+            <label for="appointmentTime">Preferred time slot</label>
+            <select id="appointmentTime" required>
+              <option value="">Choose a time slot</option>
+              <option value="09:00 AM - 12:00 PM">09:00 AM – 12:00 PM</option>
+              <option value="12:00 PM - 03:00 PM">12:00 PM – 03:00 PM</option>
+              <option value="03:00 PM - 06:00 PM">03:00 PM – 06:00 PM</option>
+              <option value="06:00 PM - 09:00 PM">06:00 PM – 09:00 PM</option>
             </select>
           </div>
         </div>
 
-        <button class="primary-button" type="submit">
-          Find Available Doctors & Slots
-        </button>
-        <p class="helper">* Required fields. Doctor profiles and ratings are sample data for this project demo.</p>
+        <button class="btn btn-primary btn-full" type="submit">Search Doctors →</button>
       </form>
+      <p class="helper-text">Choose your specialty, date, and preferred time to view matching doctors.</p>
     </section>
 
-    <section id="resultsSection" class="panel" hidden>
-      <p class="eyebrow">STEP 2</p>
-      <h2>Recommended doctors & available slots</h2>
-      <p id="resultsMessage" class="helper" aria-live="polite"></p>
+    <section class="results-section" id="resultsSection" hidden>
+      <div class="section-heading results-heading">
+        <div>
+          <span class="step-label">STEP 2</span>
+          <h2>Choose your doctor</h2>
+          <p id="resultsSummary" class="muted"></p>
+        </div>
+        <select id="sortRating" aria-label="Sort doctors">
+          <option value="recommended">Recommended first</option>
+          <option value="rating">Highest rated</option>
+          <option value="reviews">Most reviewed</option>
+        </select>
+      </div>
       <div id="doctorResults" class="doctor-grid"></div>
     </section>
 
-    <section id="confirmationSection" class="panel confirmation" hidden
-      aria-live="polite">
-      <div class="success-icon">✓</div>
-      <p class="eyebrow">BOOKING CONFIRMATION</p>
-      <h2>Appointment booked successfully!</h2>
-      <div id="confirmationDetails"></div>
-      <p class="helper">
-        This is a browser-based demo confirmation, not a real hospital booking.
-      </p>
-      <button id="newSearchButton" class="secondary-button" type="button">
-        Find another appointment
-      </button>
-    </section>
-
-    <section class="panel">
+    <section class="panel booking-panel" id="bookingSection" hidden>
       <div class="section-heading">
         <div>
-          <p class="eyebrow">YOUR ACTIVITY</p>
-          <h2>Appointments saved on this browser</h2>
+          <span class="step-label">STEP 3</span>
+          <h2>Your details</h2>
         </div>
+        <span class="fee-pill">₹800 consultation</span>
       </div>
-      <p class="helper">
-        Demo bookings are stored in this browser only.
-        They are not shared with a hospital or other users.
-      </p>
-      <div id="bookingHistory"></div>
+
+      <div id="selectedDoctorSummary" class="selected-doctor-summary"></div>
+
+      <form id="bookingForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="patientName">Full name</label>
+            <input id="patientName" name="patientName" type="text" placeholder="Enter your full name" autocomplete="name" required maxlength="100">
+          </div>
+
+          <div class="field">
+            <label for="patientEmail">Email address</label>
+            <input id="patientEmail" name="patientEmail" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="150">
+          </div>
+
+          <div class="field">
+            <label for="patientPhone">Phone number</label>
+            <input id="patientPhone" name="patientPhone" type="tel" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit phone number" required>
+          </div>
+
+          <div class="field">
+            <label for="bookingDateDisplay">Appointment date</label>
+            <input id="bookingDateDisplay" type="text" readonly>
+          </div>
+
+          <div class="field">
+            <label for="bookingTimeDisplay">Appointment time</label>
+            <input id="bookingTimeDisplay" type="text" readonly>
+          </div>
+
+          <div class="field">
+            <label for="bookingFee">Consultation fee</label>
+            <input id="bookingFee" type="text" value="₹800" readonly>
+          </div>
+        </div>
+
+        <p id="bookingError" class="error-message" role="alert" hidden></p>
+        <button class="btn btn-primary btn-full" type="submit">Confirm Appointment</button>
+        <p class="helper-text">Please check your details before confirming.</p>
+      </form>
     </section>
 
-    <p class="disclaimer">
-      MediSlot AI is a student project demonstration. Doctor details,
-      ratings and availability are illustrative, not verified medical
-      information. No real appointment is made with a healthcare provider.
-    </p>
+    <section class="panel receipt-panel" id="receiptSection" hidden>
+      <div id="receiptContent">
+        <div class="receipt-success">
+          <span class="success-icon">✓</span>
+          <div>
+            <h2>Appointment confirmed!</h2>
+            <p>Your appointment summary is ready.</p>
+          </div>
+        </div>
+
+        <div class="receipt-brand">
+          <div>
+            <h2>MediSlot AI</h2>
+            <p>Doctor Appointment Receipt</p>
+          </div>
+          <span class="paid-label">BOOKING CONFIRMED</span>
+        </div>
+
+        <div class="receipt-id-row">
+          <span>Appointment ID</span>
+          <strong id="receiptId"></strong>
+        </div>
+
+        <div class="receipt-details">
+          <div><span>Patient name</span><strong id="receiptName"></strong></div>
+          <div><span>Email</span><strong id="receiptEmail"></strong></div>
+          <div><span>Phone</span><strong id="receiptPhone"></strong></div>
+          <div><span>Doctor</span><strong id="receiptDoctor"></strong></div>
+          <div><span>Specialty</span><strong id="receiptSpecialty"></strong></div>
+          <div><span>Date</span><strong id="receiptDate"></strong></div>
+          <div><span>Time slot</span><strong id="receiptTime"></strong></div>
+          <div><span>Doctor rating</span><strong id="receiptRating"></strong></div>
+        </div>
+
+        <div class="receipt-total">
+          <span>Consultation fee</span>
+          <strong>₹800</strong>
+        </div>
+
+        <p class="receipt-disclaimer">This is a demonstration booking receipt. It is not a hospital-issued invoice or proof of payment.</p>
+        <p class="receipt-generated">Generated on <span id="receiptGenerated"></span></p>
+      </div>
+
+      <div class="receipt-actions no-print">
+        <button id="printReceipt" class="btn btn-primary" type="button">Print / Save as PDF</button>
+        <button id="newBooking" class="btn btn-secondary" type="button">Book Another Appointment</button>
+      </div>
+    </section>
+
+    <section class="panel history-panel" id="historySection">
+      <div class="section-heading">
+        <div>
+          <span class="step-label">YOUR ACTIVITY</span>
+          <h2>Saved appointments</h2>
+        </div>
+        <button id="clearAppointments" class="btn btn-secondary btn-small" type="button">Clear history</button>
+      </div>
+      <p class="helper-text">Appointments confirmed in this browser appear here.</p>
+      <div id="appointmentHistory" class="history-list"></div>
+    </section>
+
+    <p class="disclaimer">MediSlot AI is a demonstration project. Doctor profiles, ratings, time slots, and bookings are sample information, not live medical services.</p>
   </main>
 
-  <footer>
-    MediSlot AI · Smart scheduling project
-  </footer>
+  <footer class="site-footer">© 2026 MediSlot AI · A healthcare appointment booking demo</footer>
 </body>
 </html>
