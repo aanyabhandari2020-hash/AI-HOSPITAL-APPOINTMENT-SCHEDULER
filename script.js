@@ -1,7 +1,6 @@
-
 /* =========================================================
    MEDISLOT AI — APPOINTMENT BOOKING & EMAIL CONFIRMATIONS
-   File: script.js
+   Complete replacement file: script.js
    ========================================================= */
 
 /* 1. EMAILJS CONFIGURATION */
@@ -9,136 +8,22 @@ const EMAILJS_PUBLIC_KEY = "XqKQRka3CioBYl-qZ";
 const EMAILJS_SERVICE_ID = "service_qlo3wqh";
 const EMAILJS_TEMPLATE_ID = "template_ujfmo3r";
 
-/* 2. DOCTOR DIRECTORY
-   These are demonstration records, not verified real doctors.
-*/
+/* 2. SAMPLE DOCTOR DIRECTORY — demonstration data, not verified providers */
 const doctors = [
-  {
-    id: 1,
-    name: "Dr. Aarav Sharma",
-    specialty: "General Physician",
-    rating: 4.9,
-    reviews: 245,
-    experience: "12 years",
-    fee: 500
-  },
-  {
-    id: 2,
-    name: "Dr. Priya Mehta",
-    specialty: "Cardiologist",
-    rating: 4.8,
-    reviews: 198,
-    experience: "10 years",
-    fee: 800
-  },
-  {
-    id: 3,
-    name: "Dr. Rohan Gupta",
-    specialty: "Dermatologist",
-    rating: 4.7,
-    reviews: 174,
-    experience: "9 years",
-    fee: 600
-  },
-  {
-    id: 4,
-    name: "Dr. Ananya Verma",
-    specialty: "Pediatrician",
-    rating: 4.9,
-    reviews: 221,
-    experience: "11 years",
-    fee: 650
-  },
-  {
-    id: 5,
-    name: "Dr. Kabir Singh",
-    specialty: "Orthopedic",
-    rating: 4.6,
-    reviews: 142,
-    experience: "8 years",
-    fee: 700
-  },
-  {
-    id: 6,
-    name: "Dr. Meera Joshi",
-    specialty: "Gynecologist",
-    rating: 4.8,
-    reviews: 203,
-    experience: "13 years",
-    fee: 750
-  },
-  {
-    id: 7,
-    name: "Dr. Ishaan Kapoor",
-    specialty: "Neurologist",
-    rating: 4.7,
-    reviews: 116,
-    experience: "10 years",
-    fee: 900
-  },
-  {
-    id: 8,
-    name: "Dr. Sanya Malhotra",
-    specialty: "Ophthalmologist",
-    rating: 4.8,
-    reviews: 156,
-    experience: "9 years",
-    fee: 600
-  },
-  {
-    id: 9,
-    name: "Dr. Vivaan Patel",
-    specialty: "Dentist",
-    rating: 4.6,
-    reviews: 134,
-    experience: "7 years",
-    fee: 500
-  },
-  {
-    id: 10,
-    name: "Dr. Aditi Rao",
-    specialty: "Psychiatrist",
-    rating: 4.9,
-    reviews: 188,
-    experience: "12 years",
-    fee: 850
-  },
-  {
-    id: 11,
-    name: "Dr. Reyansh Jain",
-    specialty: "ENT Specialist",
-    rating: 4.5,
-    reviews: 102,
-    experience: "6 years",
-    fee: 550
-  },
-  {
-    id: 12,
-    name: "Dr. Kavya Nair",
-    specialty: "Endocrinologist",
-    rating: 4.8,
-    reviews: 163,
-    experience: "11 years",
-    fee: 800
-  },
-  {
-    id: 13,
-    name: "Dr. Aditya Soni",
-    specialty: "Gastroenterologist",
-    rating: 4.7,
-    reviews: 149,
-    experience: "9 years",
-    fee: 750
-  },
-  {
-    id: 14,
-    name: "Dr. Nisha Bansal",
-    specialty: "Pulmonologist",
-    rating: 4.6,
-    reviews: 121,
-    experience: "8 years",
-    fee: 700
-  }
+  { id: 1, name: "Dr. Aarav Sharma", specialty: "General Physician", rating: 4.9, reviews: 245, experience: "12 years", fee: 500 },
+  { id: 2, name: "Dr. Priya Mehta", specialty: "Cardiologist", rating: 4.8, reviews: 198, experience: "10 years", fee: 800 },
+  { id: 3, name: "Dr. Rohan Gupta", specialty: "Dermatologist", rating: 4.7, reviews: 174, experience: "9 years", fee: 600 },
+  { id: 4, name: "Dr. Ananya Verma", specialty: "Pediatrician", rating: 4.9, reviews: 221, experience: "11 years", fee: 650 },
+  { id: 5, name: "Dr. Kabir Singh", specialty: "Orthopedic", rating: 4.6, reviews: 142, experience: "8 years", fee: 700 },
+  { id: 6, name: "Dr. Meera Joshi", specialty: "Gynecologist", rating: 4.8, reviews: 203, experience: "13 years", fee: 750 },
+  { id: 7, name: "Dr. Ishaan Kapoor", specialty: "Neurologist", rating: 4.7, reviews: 116, experience: "10 years", fee: 900 },
+  { id: 8, name: "Dr. Sanya Malhotra", specialty: "Ophthalmologist", rating: 4.8, reviews: 156, experience: "9 years", fee: 600 },
+  { id: 9, name: "Dr. Vivaan Patel", specialty: "Dentist", rating: 4.6, reviews: 134, experience: "7 years", fee: 500 },
+  { id: 10, name: "Dr. Aditi Rao", specialty: "Psychiatrist", rating: 4.9, reviews: 188, experience: "12 years", fee: 850 },
+  { id: 11, name: "Dr. Reyansh Jain", specialty: "ENT Specialist", rating: 4.5, reviews: 102, experience: "6 years", fee: 550 },
+  { id: 12, name: "Dr. Kavya Nair", specialty: "Endocrinologist", rating: 4.8, reviews: 163, experience: "11 years", fee: 800 },
+  { id: 13, name: "Dr. Aditya Soni", specialty: "Gastroenterologist", rating: 4.7, reviews: 149, experience: "9 years", fee: 750 },
+  { id: 14, name: "Dr. Nisha Bansal", specialty: "Pulmonologist", rating: 4.6, reviews: 121, experience: "8 years", fee: 700 }
 ];
 
 /* 3. ELEMENT REFERENCES */
@@ -157,7 +42,7 @@ const dateInput = $("preferredDate");
 const timeInput = $("preferredTime");
 
 const doctorSearch = $("doctorSearch");
-const doctorList = $("doctorList");
+let doctorList = $("doctorList");
 const chosenSlot = $("chosenSlot");
 
 const patientNameInput = $("patientName");
@@ -166,43 +51,34 @@ const patientPhoneInput = $("patientPhone");
 
 const selectionSummary = $("selectionSummary");
 const finalSummary = $("finalSummary");
-
 const emailStatus = $("emailStatus");
 const receiptEmailStatus = $("receiptEmailStatus");
-
 const bookingReference = $("bookingReference");
 const receiptDetails = $("receiptDetails");
-
 const submitBooking = $("submitBooking");
 
 const toStep2 = $("toStep2");
 const backToStep1 = $("backToStep1");
 const toStep3 = $("toStep3");
 const backToStep2 = $("backToStep2");
-
 const printReceipt = $("printReceipt");
 const newBooking = $("newBooking");
 
 /* 4. APPLICATION STATE */
-let currentStep = 1;
 let selectedDoctor = null;
 let selectedTime = "";
 let emailJsReady = false;
 let isSubmitting = false;
 
-/* 5. GENERAL HELPERS */
+/* 5. HELPERS */
 function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (character) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-
-    return entities[character];
-  });
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
 function formatDate(dateString) {
@@ -210,9 +86,7 @@ function formatDate(dateString) {
 
   const date = new Date(`${dateString}T12:00:00`);
 
-  if (Number.isNaN(date.getTime())) {
-    return dateString;
-  }
+  if (Number.isNaN(date.getTime())) return dateString;
 
   return date.toLocaleDateString("en-IN", {
     day: "numeric",
@@ -224,33 +98,24 @@ function formatDate(dateString) {
 function formatTime(timeString) {
   if (!timeString) return "Not selected";
 
-  const parts = timeString.split(":");
-  const hours = Number(parts[0]);
-  const minutes = parts[1] || "00";
+  const [hourText, minuteText = "00"] = timeString.split(":");
+  const hours = Number(hourText);
 
   if (!Number.isFinite(hours)) return timeString;
 
-  const period = hours >= 12 ? "PM" : "AM";
-  const displayHour = hours % 12 || 12;
-
-  return `${displayHour}:${minutes} ${period}`;
+  return `${hours % 12 || 12}:${minuteText} ${hours >= 12 ? "PM" : "AM"}`;
 }
 
 function generateBookingReference() {
-  const randomPart = Math.random()
-    .toString(36)
-    .substring(2, 8)
-    .toUpperCase();
-
-  return `MSAI-${Date.now().toString().slice(-6)}-${randomPart}`;
+  return `MSAI-${Date.now().toString().slice(-6)}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
 
-function setStatus(element, message, type) {
+function setStatus(element, message, type = "info") {
   if (!element) return;
 
   element.textContent = message;
   element.setAttribute("role", "status");
-  element.dataset.status = type || "info";
+  element.dataset.status = type;
 }
 
 function scrollToElement(element) {
@@ -262,18 +127,78 @@ function scrollToElement(element) {
   }
 }
 
-/* 6. EMAILJS INITIALIZATION */
-function initializeEmailJS() {
-  if (
-    !window.emailjs ||
-    !EMAILJS_PUBLIC_KEY ||
-    !EMAILJS_SERVICE_ID ||
-    !EMAILJS_TEMPLATE_ID
-  ) {
-    emailJsReady = false;
+/* 6. POPULATE THE DOCTOR DROPDOWN */
+function populatePreferredDoctorDropdown() {
+  if (!doctorInput) {
     console.warn(
-      "EmailJS is unavailable. Check the EmailJS script and configuration."
+      'MediSlot AI: no element with id="preferredDoctor" was found in index.html.'
     );
+    return;
+  }
+
+  const previousValue = doctorInput.value;
+  doctorInput.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose a doctor";
+  doctorInput.appendChild(placeholder);
+
+  doctors.forEach((doctor) => {
+    const option = document.createElement("option");
+
+    option.value = doctor.name;
+    option.textContent =
+      `${doctor.name} — ${doctor.specialty} — ${doctor.rating.toFixed(1)}/5`;
+
+    doctorInput.appendChild(option);
+  });
+
+  /*
+   * The doctor can be selected using the cards or dropdown.
+   * Do not let an initially empty dropdown block the form.
+   */
+  doctorInput.required = false;
+
+  if (previousValue && doctors.some(
+    (doctor) => doctor.name === previousValue
+  )) {
+    doctorInput.value = previousValue;
+  }
+}
+
+/* 7. CREATE DOCTOR CARD CONTAINER IF MISSING */
+function ensureDoctorListContainer() {
+  if (doctorList) return doctorList;
+
+  if (!doctorInput || !doctorInput.parentElement) {
+    console.warn(
+      'MediSlot AI: cannot create doctor list because #preferredDoctor is missing.'
+    );
+    return null;
+  }
+
+  doctorList = document.createElement("div");
+  doctorList.id = "doctorList";
+  doctorList.className = "doctor-list";
+
+  doctorInput.parentElement.insertAdjacentElement(
+    "afterend",
+    doctorList
+  );
+
+  return doctorList;
+}
+
+/* 8. EMAILJS INITIALIZATION */
+function initializeEmailJS() {
+  if (!window.emailjs) {
+    emailJsReady = false;
+
+    console.warn(
+      "EmailJS library did not load. Check the EmailJS script tag in index.html."
+    );
+
     return false;
   }
 
@@ -283,19 +208,21 @@ function initializeEmailJS() {
     });
 
     emailJsReady = true;
+
     console.log("MediSlot AI: EmailJS initialized.");
+
     return true;
   } catch (error) {
     emailJsReady = false;
+
     console.error("EmailJS initialization failed:", error);
+
     return false;
   }
 }
 
-/* 7. STEP NAVIGATION */
+/* 9. STEP NAVIGATION AND VALIDATION */
 function showStep(stepNumber) {
-  currentStep = stepNumber;
-
   if (step1) step1.hidden = stepNumber !== 1;
   if (step2) step2.hidden = stepNumber !== 2;
   if (step3) step3.hidden = stepNumber !== 3;
@@ -303,22 +230,29 @@ function showStep(stepNumber) {
   if (receipt) receipt.hidden = true;
   if (form) form.hidden = false;
 
-  scrollToElement(
+  const target =
     stepNumber === 1 ? step1 :
     stepNumber === 2 ? step2 :
-    step3
-  );
+    step3;
+
+  scrollToElement(target);
 }
 
 function validateStep(container) {
   if (!container) return true;
 
-  const fields = Array.from(
-    container.querySelectorAll("input, select, textarea")
+  const fields = container.querySelectorAll(
+    "input, select, textarea"
   );
 
   for (const field of fields) {
-    if (field.disabled) continue;
+    if (
+      field.disabled ||
+      field.type === "button" ||
+      field.type === "submit"
+    ) {
+      continue;
+    }
 
     if (!field.checkValidity()) {
       field.reportValidity();
@@ -330,16 +264,16 @@ function validateStep(container) {
   return true;
 }
 
-/* 8. DATE AND TIME OPTIONS */
+/* 10. DATE AND TIME OPTIONS */
 function initializeDateField() {
   if (!dateInput) return;
 
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
 
-  const today = `${year}-${month}-${day}`;
+  const today =
+    `${now.getFullYear()}-` +
+    `${String(now.getMonth() + 1).padStart(2, "0")}-` +
+    `${String(now.getDate()).padStart(2, "0")}`;
 
   dateInput.min = today;
 
@@ -379,8 +313,10 @@ function initializeTimeOptions() {
 
   getAvailableTimes().forEach((time) => {
     const option = document.createElement("option");
+
     option.value = time;
     option.textContent = formatTime(time);
+
     timeInput.appendChild(option);
   });
 
@@ -392,11 +328,11 @@ function initializeTimeOptions() {
   }
 }
 
-/* 9. DOCTOR FILTERING */
+/* 11. DOCTOR FILTERS */
 function getRatingMinimum() {
-  if (!ratingInput) return 0;
-
-  const value = String(ratingInput.value || "").toLowerCase();
+  const value = String(
+    ratingInput?.value || ""
+  ).toLowerCase();
 
   if (
     value.includes("highly") ||
@@ -417,9 +353,11 @@ function getRatingMinimum() {
 }
 
 function matchesRating(doctor) {
-  if (!ratingInput || !ratingInput.value) return true;
+  const value = String(
+    ratingInput?.value || ""
+  ).toLowerCase();
 
-  const value = String(ratingInput.value).toLowerCase();
+  if (!value) return true;
 
   if (value.includes("below")) {
     return doctor.rating < 3;
@@ -433,13 +371,13 @@ function matchesRating(doctor) {
 }
 
 function getFilteredDoctors() {
-  const specialty = specialtyInput
-    ? specialtyInput.value.trim().toLowerCase()
-    : "";
+  const specialty = String(
+    specialtyInput?.value || ""
+  ).trim().toLowerCase();
 
-  const searchText = doctorSearch
-    ? doctorSearch.value.trim().toLowerCase()
-    : "";
+  const searchText = String(
+    doctorSearch?.value || ""
+  ).trim().toLowerCase();
 
   return doctors.filter((doctor) => {
     const specialtyMatches =
@@ -447,100 +385,135 @@ function getFilteredDoctors() {
       specialty === "all" ||
       doctor.specialty.toLowerCase() === specialty;
 
-    const ratingMatches = matchesRating(doctor);
-
     const searchMatches =
       !searchText ||
       doctor.name.toLowerCase().includes(searchText) ||
       doctor.specialty.toLowerCase().includes(searchText);
 
-    return specialtyMatches && ratingMatches && searchMatches;
+    return (
+      specialtyMatches &&
+      searchMatches &&
+      matchesRating(doctor)
+    );
   });
 }
 
+/* 12. SELECT A DOCTOR */
+function selectDoctorById(id) {
+  selectedDoctor =
+    doctors.find((doctor) => doctor.id === Number(id)) || null;
+
+  if (!selectedDoctor) return;
+
+  if (doctorInput) {
+    doctorInput.value = selectedDoctor.name;
+    doctorInput.required = false;
+  }
+
+  updateSelectionSummary();
+  updateFinalSummary();
+  renderDoctors();
+}
+
+/* 13. DISPLAY DOCTOR CARDS */
 function renderDoctors() {
-  if (!doctorList) return;
+  const container = ensureDoctorListContainer();
+
+  if (!container) return;
 
   const filteredDoctors = getFilteredDoctors();
 
   if (filteredDoctors.length === 0) {
-    doctorList.innerHTML =
+    container.innerHTML =
       '<p class="no-doctors">No doctors match these filters. Try another specialty or rating.</p>';
+
     return;
   }
 
-  doctorList.innerHTML = filteredDoctors.map((doctor) => `
-    <article class="doctor-card">
+  container.innerHTML = filteredDoctors.map((doctor) => `
+    <article class="doctor-card"
+      style="border:1px solid #ddd;border-radius:12px;padding:14px;margin:10px 0;">
+
       <h3>${escapeHTML(doctor.name)}</h3>
+
       <p>${escapeHTML(doctor.specialty)}</p>
-      <p>⭐ ${doctor.rating.toFixed(1)} / 5
-        (${doctor.reviews} reviews)</p>
-      <p>Experience: ${escapeHTML(doctor.experience)}</p>
-      <p>Consultation fee: ₹${doctor.fee}</p>
+
+      <p>
+        ⭐ ${doctor.rating.toFixed(1)} / 5
+        (${doctor.reviews} reviews)
+      </p>
+
+      <p>
+        Experience: ${escapeHTML(doctor.experience)}
+      </p>
+
+      <p>
+        Consultation fee: ₹${doctor.fee}
+      </p>
+
       <button
         type="button"
         class="select-doctor-btn"
-        data-doctor-id="${doctor.id}"
-      >
-        Select Doctor
+        data-doctor-id="${doctor.id}">
+        ${
+          selectedDoctor?.id === doctor.id
+            ? "Selected ✓"
+            : "Select Doctor"
+        }
       </button>
+
     </article>
   `).join("");
 
-  doctorList.querySelectorAll(".select-doctor-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const doctor = doctors.find(
-        (item) => item.id === Number(button.dataset.doctorId)
-      );
-
-      if (!doctor) return;
-
-      selectedDoctor = doctor;
-
-      if (doctorInput) {
-        const matchingOption = Array.from(doctorInput.options).find(
-          (option) =>
-            option.value === doctor.name ||
-            option.textContent.trim() === doctor.name
-        );
-
-        if (matchingOption) {
-          doctorInput.value = matchingOption.value;
-        }
-      }
-
-      updateSelectionSummary();
-      renderDoctors();
+  container.querySelectorAll(".select-doctor-btn")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        selectDoctorById(button.dataset.doctorId);
+      });
     });
-
-    if (selectedDoctor &&
-        Number(button.dataset.doctorId) === selectedDoctor.id) {
-      button.textContent = "Selected ✓";
-    }
-  });
 }
 
-/* 10. SELECTED APPOINTMENT SUMMARY */
+/* 14. UPDATE SELECTION SUMMARY */
 function updateSelectionSummary() {
-  if (!selectionSummary) return;
+  const doctorName =
+    selectedDoctor?.name ||
+    doctorInput?.value ||
+    "Not selected";
 
-  const doctorName = selectedDoctor
-    ? selectedDoctor.name
-    : (doctorInput?.value || "Not selected");
-
-  const specialty = selectedDoctor
-    ? selectedDoctor.specialty
-    : (specialtyInput?.value || "Not selected");
+  const specialty =
+    selectedDoctor?.specialty ||
+    specialtyInput?.value ||
+    "Not selected";
 
   const date = formatDate(dateInput?.value);
-  const time = formatTime(selectedTime || timeInput?.value);
 
-  selectionSummary.innerHTML = `
-    <p><strong>Specialty:</strong> ${escapeHTML(specialty)}</p>
-    <p><strong>Doctor:</strong> ${escapeHTML(doctorName)}</p>
-    <p><strong>Date:</strong> ${escapeHTML(date)}</p>
-    <p><strong>Time:</strong> ${escapeHTML(time)}</p>
-  `;
+  const time = formatTime(
+    selectedTime || timeInput?.value
+  );
+
+  if (selectionSummary) {
+    selectionSummary.innerHTML = `
+      <p>
+        <strong>Specialty:</strong>
+        ${escapeHTML(specialty)}
+      </p>
+
+      <p>
+        <strong>Doctor:</strong>
+        ${escapeHTML(doctorName)}
+      </p>
+
+      <p>
+        <strong>Date:</strong>
+        ${escapeHTML(date)}
+      </p>
+
+      <p>
+        <strong>Time:</strong>
+        ${escapeHTML(time)}
+      </p>
+    `;
+  }
 
   if (chosenSlot) {
     chosenSlot.textContent =
@@ -548,69 +521,107 @@ function updateSelectionSummary() {
   }
 }
 
+/* 15. UPDATE FINAL SUMMARY */
 function updateFinalSummary() {
   if (!finalSummary) return;
 
-  const doctorName = selectedDoctor
-    ? selectedDoctor.name
-    : (doctorInput?.value || "Not selected");
+  const doctorName =
+    selectedDoctor?.name ||
+    doctorInput?.value ||
+    "Not selected";
 
-  const specialty = selectedDoctor
-    ? selectedDoctor.specialty
-    : (specialtyInput?.value || "Not selected");
+  const specialty =
+    selectedDoctor?.specialty ||
+    specialtyInput?.value ||
+    "Not selected";
 
   finalSummary.innerHTML = `
-    <p><strong>Patient:</strong> ${escapeHTML(patientNameInput?.value)}</p>
-    <p><strong>Email:</strong> ${escapeHTML(patientEmailInput?.value)}</p>
-    <p><strong>Phone:</strong> ${escapeHTML(patientPhoneInput?.value)}</p>
-    <p><strong>Specialty:</strong> ${escapeHTML(specialty)}</p>
-    <p><strong>Doctor:</strong> ${escapeHTML(doctorName)}</p>
-    <p><strong>Appointment date:</strong> ${escapeHTML(formatDate(dateInput?.value))}</p>
-    <p><strong>Appointment time:</strong> ${escapeHTML(formatTime(selectedTime || timeInput?.value))}</p>
-    <p><strong>Consultation fee:</strong> ₹${selectedDoctor ? selectedDoctor.fee : "To be confirmed"}</p>
+    <p>
+      <strong>Patient:</strong>
+      ${escapeHTML(patientNameInput?.value)}
+    </p>
+
+    <p>
+      <strong>Email:</strong>
+      ${escapeHTML(patientEmailInput?.value)}
+    </p>
+
+    <p>
+      <strong>Phone:</strong>
+      ${escapeHTML(patientPhoneInput?.value)}
+    </p>
+
+    <p>
+      <strong>Specialty:</strong>
+      ${escapeHTML(specialty)}
+    </p>
+
+    <p>
+      <strong>Doctor:</strong>
+      ${escapeHTML(doctorName)}
+    </p>
+
+    <p>
+      <strong>Appointment date:</strong>
+      ${escapeHTML(formatDate(dateInput?.value))}
+    </p>
+
+    <p>
+      <strong>Appointment time:</strong>
+      ${escapeHTML(formatTime(selectedTime || timeInput?.value))}
+    </p>
+
+    <p>
+      <strong>Consultation fee:</strong>
+      ₹${selectedDoctor ? selectedDoctor.fee : "To be confirmed"}
+    </p>
   `;
 }
 
-/* 11. APPOINTMENT FORMATTING */
+/* 16. CREATE BOOKING DETAILS */
 function buildBooking(patientName, patientEmail, patientPhone) {
-  const doctorName = selectedDoctor
-    ? selectedDoctor.name
-    : (doctorInput?.value || "");
-
-  const specialty = selectedDoctor
-    ? selectedDoctor.specialty
-    : (specialtyInput?.value || "");
-
   return {
     booking_id: generateBookingReference(),
     patient_name: patientName,
     patient_email: patientEmail,
     patient_phone: patientPhone,
     to_email: patientEmail,
-    doctor_name: doctorName,
-    specialty: specialty,
+
+    doctor_name:
+      selectedDoctor?.name ||
+      doctorInput?.value ||
+      "",
+
+    specialty:
+      selectedDoctor?.specialty ||
+      specialtyInput?.value ||
+      "",
+
     appointment_date: formatDate(dateInput?.value),
-    appointment_time: formatTime(selectedTime || timeInput?.value),
-    consultation_fee: selectedDoctor ? selectedDoctor.fee : "",
+
+    appointment_time: formatTime(
+      selectedTime || timeInput?.value
+    ),
+
+    consultation_fee: selectedDoctor?.fee || "",
+
     created_at: new Date().toISOString()
   };
 }
 
-/* 12. DEMO BOOKING STORAGE
-   localStorage only works in the current browser/device.
-   It is not a shared, secure booking database.
-*/
+/* 17. SAVE DEMO BOOKING IN THIS BROWSER */
 function saveDemoBooking(booking) {
   try {
     const storageKey = "medislot_ai_demo_bookings";
-    const existingBookings = JSON.parse(
+
+    const existing = JSON.parse(
       localStorage.getItem(storageKey) || "[]"
     );
 
-    const duplicate = existingBookings.some((existing) =>
-      existing.doctor_name === booking.doctor_name &&
-      existing.appointment_date === booking.appointment_date &&
-      existing.appointment_time === booking.appointment_time
+    const duplicate = existing.some((item) =>
+      item.doctor_name === booking.doctor_name &&
+      item.appointment_date === booking.appointment_date &&
+      item.appointment_time === booking.appointment_time
     );
 
     if (duplicate) {
@@ -620,8 +631,12 @@ function saveDemoBooking(booking) {
       };
     }
 
-    existingBookings.push(booking);
-    localStorage.setItem(storageKey, JSON.stringify(existingBookings));
+    existing.push(booking);
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(existing)
+    );
 
     return {
       saved: true,
@@ -637,30 +652,13 @@ function saveDemoBooking(booking) {
   }
 }
 
-/* 13. SEND CONFIRMATION EMAIL */
+/* 18. SEND EMAIL CONFIRMATION */
 async function sendConfirmationEmail(booking) {
   if (!emailJsReady || !window.emailjs) {
     throw new Error(
-      "Email service is not ready. Check the EmailJS script and configuration."
+      "EmailJS is not ready. Check the EmailJS script tag in index.html."
     );
   }
-
-  /*
-    These variable names must match the EmailJS template.
-
-    Required template variables:
-    {{to_email}}
-    {{patient_name}}
-    {{doctor_name}}
-    {{specialty}}
-    {{appointment_date}}
-    {{appointment_time}}
-    {{booking_id}}
-
-    Optional:
-    {{patient_phone}}
-    {{consultation_fee}}
-  */
 
   const templateParams = {
     to_email: booking.to_email,
@@ -682,7 +680,7 @@ async function sendConfirmationEmail(booking) {
   );
 }
 
-/* 14. RECEIPT */
+/* 19. DISPLAY BOOKING RECEIPT */
 function showReceipt(booking) {
   if (bookingReference) {
     bookingReference.textContent = booking.booking_id;
@@ -690,19 +688,54 @@ function showReceipt(booking) {
 
   if (receiptDetails) {
     receiptDetails.innerHTML = `
-      <p><strong>Booking reference:</strong> ${escapeHTML(booking.booking_id)}</p>
-      <p><strong>Patient:</strong> ${escapeHTML(booking.patient_name)}</p>
-      <p><strong>Email:</strong> ${escapeHTML(booking.patient_email)}</p>
-      <p><strong>Phone:</strong> ${escapeHTML(booking.patient_phone)}</p>
-      <p><strong>Doctor:</strong> ${escapeHTML(booking.doctor_name)}</p>
-      <p><strong>Specialty:</strong> ${escapeHTML(booking.specialty)}</p>
-      <p><strong>Date:</strong> ${escapeHTML(booking.appointment_date)}</p>
-      <p><strong>Time:</strong> ${escapeHTML(booking.appointment_time)}</p>
-      <p><strong>Consultation fee:</strong> ${
-        booking.consultation_fee
-          ? `₹${escapeHTML(booking.consultation_fee)}`
-          : "To be confirmed"
-      }</p>
+      <p>
+        <strong>Booking reference:</strong>
+        ${escapeHTML(booking.booking_id)}
+      </p>
+
+      <p>
+        <strong>Patient:</strong>
+        ${escapeHTML(booking.patient_name)}
+      </p>
+
+      <p>
+        <strong>Email:</strong>
+        ${escapeHTML(booking.patient_email)}
+      </p>
+
+      <p>
+        <strong>Phone:</strong>
+        ${escapeHTML(booking.patient_phone)}
+      </p>
+
+      <p>
+        <strong>Doctor:</strong>
+        ${escapeHTML(booking.doctor_name)}
+      </p>
+
+      <p>
+        <strong>Specialty:</strong>
+        ${escapeHTML(booking.specialty)}
+      </p>
+
+      <p>
+        <strong>Date:</strong>
+        ${escapeHTML(booking.appointment_date)}
+      </p>
+
+      <p>
+        <strong>Time:</strong>
+        ${escapeHTML(booking.appointment_time)}
+      </p>
+
+      <p>
+        <strong>Consultation fee:</strong>
+        ${
+          booking.consultation_fee
+            ? `₹${escapeHTML(booking.consultation_fee)}`
+            : "To be confirmed"
+        }
+      </p>
     `;
   }
 
@@ -710,12 +743,13 @@ function showReceipt(booking) {
   if (step1) step1.hidden = true;
   if (step2) step2.hidden = true;
   if (step3) step3.hidden = true;
+
   if (receipt) receipt.hidden = false;
 
   scrollToElement(receipt);
 }
 
-/* 15. FINAL BOOKING SUBMISSION */
+/* 20. SUBMIT BOOKING */
 async function handleBookingSubmission(event) {
   event.preventDefault();
 
@@ -723,34 +757,45 @@ async function handleBookingSubmission(event) {
 
   if (!validateStep(step3)) return;
 
-  const patientName = patientNameInput?.value.trim() || "";
-  const patientEmail = patientEmailInput?.value.trim() || "";
-  const patientPhone = patientPhoneInput?.value.trim() || "";
+  const patientName =
+    patientNameInput?.value.trim() || "";
+
+  const patientEmail =
+    patientEmailInput?.value.trim() || "";
+
+  const patientPhone =
+    patientPhoneInput?.value.trim() || "";
 
   if (!patientName || !patientEmail || !patientPhone) {
-    alert("Please enter your name, email address, and phone number.");
+    alert(
+      "Please enter your name, email address, and phone number."
+    );
+
     return;
   }
 
-  if (!selectedDoctor) {
-    const enteredDoctor = doctorInput?.value.trim();
-
-    if (enteredDoctor) {
-      selectedDoctor = doctors.find(
-        (doctor) => doctor.name === enteredDoctor
+  if (!selectedDoctor && doctorInput?.value) {
+    selectedDoctor =
+      doctors.find(
+        (doctor) => doctor.name === doctorInput.value
       ) || null;
-    }
   }
 
   if (!selectedDoctor) {
-    alert("Please select a doctor from the doctor list.");
+    alert(
+      "Please choose a doctor from the dropdown or click Select Doctor on a doctor card."
+    );
+
     showStep(2);
+
     return;
   }
 
   if (!dateInput?.value || !(selectedTime || timeInput?.value)) {
     alert("Please select an appointment date and time.");
+
     showStep(2);
+
     return;
   }
 
@@ -769,27 +814,28 @@ async function handleBookingSubmission(event) {
     submitBooking.textContent = "Processing booking...";
   }
 
-  setStatus(emailStatus, "Processing your appointment...", "info");
+  setStatus(
+    emailStatus,
+    "Processing your appointment...",
+    "info"
+  );
 
   try {
-    /*
-      This duplicate check is only local to this browser.
-      For real shared slot locking, connect a backend/database.
-    */
     const saveResult = saveDemoBooking(booking);
 
     if (saveResult.duplicate) {
       setStatus(
         emailStatus,
-        "This doctor and time appear in this browser's demo bookings. Please choose another slot.",
+        "This doctor and time appear in this browser's demo bookings. Choose another slot.",
         "error"
       );
 
       alert(
-        "This slot is already in the local demo booking list. Please select another time."
+        "This slot is already in this browser's demo booking list. Please select another time."
       );
 
       showStep(2);
+
       return;
     }
 
@@ -797,7 +843,7 @@ async function handleBookingSubmission(event) {
 
     setStatus(
       receiptEmailStatus,
-      "Booking recorded in this browser. Sending confirmation email...",
+      "Demo booking recorded in this browser. Sending confirmation email...",
       "info"
     );
 
@@ -806,7 +852,7 @@ async function handleBookingSubmission(event) {
 
       setStatus(
         receiptEmailStatus,
-        `Confirmation email sent successfully to ${booking.patient_email}. Please check your inbox and spam folder.`,
+        `Confirmation email sent to ${booking.patient_email}. Check your inbox and spam folder.`,
         "success"
       );
 
@@ -815,18 +861,18 @@ async function handleBookingSubmission(event) {
         "Confirmation email sent successfully.",
         "success"
       );
-    } catch (emailError) {
-      console.error("EmailJS send error:", emailError);
+    } catch (error) {
+      console.error("EmailJS send error:", error);
 
       setStatus(
         receiptEmailStatus,
-        "The demo booking was recorded, but the confirmation email could not be sent. Check your EmailJS template, service, and dashboard logs.",
+        "The demo booking was recorded, but the email could not be sent. Check the EmailJS template and dashboard logs.",
         "error"
       );
 
       setStatus(
         emailStatus,
-        "Booking recorded, but email delivery failed. Please check your EmailJS settings.",
+        "Booking recorded, but email delivery failed. Check EmailJS settings.",
         "error"
       );
     }
@@ -839,7 +885,9 @@ async function handleBookingSubmission(event) {
       "error"
     );
 
-    alert("Something went wrong. Please check your entries and try again.");
+    alert(
+      "Something went wrong. Please check your entries and try again."
+    );
   } finally {
     isSubmitting = false;
 
@@ -850,7 +898,7 @@ async function handleBookingSubmission(event) {
   }
 }
 
-/* 16. RESET FOR A NEW BOOKING */
+/* 21. RESET FOR A NEW BOOKING */
 function resetBooking() {
   if (form) {
     form.reset();
@@ -868,10 +916,12 @@ function resetBooking() {
     submitBooking.textContent = "Confirm Booking";
   }
 
+  populatePreferredDoctorDropdown();
   initializeDateField();
   initializeTimeOptions();
   renderDoctors();
   updateSelectionSummary();
+  updateFinalSummary();
 
   setStatus(emailStatus, "", "info");
   setStatus(receiptEmailStatus, "", "info");
@@ -879,7 +929,7 @@ function resetBooking() {
   showStep(1);
 }
 
-/* 17. EVENT LISTENERS */
+/* 22. EVENT LISTENERS */
 function attachEventListeners() {
   if (toStep2) {
     toStep2.addEventListener("click", () => {
@@ -887,30 +937,47 @@ function attachEventListeners() {
 
       renderDoctors();
       updateSelectionSummary();
+
       showStep(2);
     });
   }
 
   if (backToStep1) {
-    backToStep1.addEventListener("click", () => showStep(1));
+    backToStep1.addEventListener("click", () => {
+      showStep(1);
+    });
   }
 
   if (toStep3) {
     toStep3.addEventListener("click", () => {
+      if (!selectedDoctor && doctorInput?.value) {
+        selectedDoctor =
+          doctors.find(
+            (doctor) => doctor.name === doctorInput.value
+          ) || null;
+      }
+
       if (!selectedDoctor) {
-        alert("Please select a doctor first.");
+        alert(
+          "Please select a doctor from the dropdown or click Select Doctor on a doctor card."
+        );
+
         return;
       }
 
       if (!dateInput?.value) {
         alert("Please select an appointment date.");
+
         dateInput?.focus();
+
         return;
       }
 
       if (!timeInput?.value) {
         alert("Please select an appointment time.");
+
         timeInput?.focus();
+
         return;
       }
 
@@ -921,24 +988,43 @@ function attachEventListeners() {
       if (!validateStep(step2)) return;
 
       updateFinalSummary();
+
       showStep(3);
     });
   }
 
   if (backToStep2) {
-    backToStep2.addEventListener("click", () => showStep(2));
+    backToStep2.addEventListener("click", () => {
+      showStep(2);
+    });
   }
 
   if (form) {
-    form.addEventListener("submit", handleBookingSubmission);
+    form.addEventListener(
+      "submit",
+      handleBookingSubmission
+    );
   }
 
   if (specialtyInput) {
     specialtyInput.addEventListener("change", () => {
-      selectedDoctor = null;
-      if (doctorInput) doctorInput.value = "";
+      if (
+        selectedDoctor &&
+        specialtyInput.value &&
+        specialtyInput.value.toLowerCase() !== "all" &&
+        selectedDoctor.specialty.toLowerCase() !==
+          specialtyInput.value.toLowerCase()
+      ) {
+        selectedDoctor = null;
+
+        if (doctorInput) {
+          doctorInput.value = "";
+        }
+      }
+
       renderDoctors();
       updateSelectionSummary();
+      updateFinalSummary();
     });
   }
 
@@ -952,29 +1038,36 @@ function attachEventListeners() {
 
   if (doctorInput) {
     doctorInput.addEventListener("change", () => {
-      const matchingDoctor = doctors.find(
-        (doctor) => doctor.name === doctorInput.value
-      );
+      selectedDoctor =
+        doctors.find(
+          (doctor) => doctor.name === doctorInput.value
+        ) || null;
 
-      selectedDoctor = matchingDoctor || null;
-
-      renderDoctors();
       updateSelectionSummary();
+      updateFinalSummary();
+      renderDoctors();
     });
   }
 
   if (dateInput) {
     dateInput.addEventListener("change", () => {
       selectedTime = "";
-      if (timeInput) timeInput.value = "";
+
+      if (timeInput) {
+        timeInput.value = "";
+      }
+
       updateSelectionSummary();
+      updateFinalSummary();
     });
   }
 
   if (timeInput) {
     timeInput.addEventListener("change", () => {
       selectedTime = timeInput.value;
+
       updateSelectionSummary();
+      updateFinalSummary();
     });
   }
 
@@ -984,12 +1077,17 @@ function attachEventListeners() {
     patientPhoneInput
   ].forEach((field) => {
     if (field) {
-      field.addEventListener("input", updateFinalSummary);
+      field.addEventListener(
+        "input",
+        updateFinalSummary
+      );
     }
   });
 
   if (printReceipt) {
-    printReceipt.addEventListener("click", () => window.print());
+    printReceipt.addEventListener("click", () => {
+      window.print();
+    });
   }
 
   if (newBooking) {
@@ -997,19 +1095,24 @@ function attachEventListeners() {
   }
 }
 
-/* 18. START APPLICATION */
+/* 23. START THE APPLICATION */
 function initializeMediSlot() {
+  populatePreferredDoctorDropdown();
   initializeEmailJS();
   initializeDateField();
   initializeTimeOptions();
   attachEventListeners();
   renderDoctors();
   updateSelectionSummary();
+  updateFinalSummary();
   showStep(1);
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeMediSlot);
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeMediSlot
+  );
 } else {
   initializeMediSlot();
 }
