@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="MediSlot AI doctor appointment booking project">
   <title>MediSlot AI | Doctor Appointment Booking</title>
-
   <link rel="stylesheet" href="style.css">
-
-  <!-- Load EmailJS and the application only once -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
@@ -45,13 +42,13 @@
       </div>
 
       <form id="bookingForm" novalidate>
-        <!-- STEP 1 -->
+        <!-- STEP 1: ALL APPOINTMENT CHOICES -->
         <section class="form-step active" id="step1">
           <div class="section-heading">
             <span class="section-icon">01</span>
             <div>
               <h2>Appointment Preferences</h2>
-              <p>Tell us what kind of doctor you are looking for.</p>
+              <p>Select your doctor, rating preference, date and time.</p>
             </div>
           </div>
 
@@ -64,7 +61,7 @@
                 <option>Dermatologist</option>
                 <option>General Physician</option>
                 <option>Neurologist</option>
-                <option>Orthopedist</option>
+                <option>Orthopedic</option>
                 <option>Pediatrician</option>
                 <option>Gynecologist</option>
                 <option>Ophthalmologist</option>
@@ -72,25 +69,17 @@
                 <option>Psychiatrist</option>
                 <option>ENT Specialist</option>
                 <option>Endocrinologist</option>
+                <option>Gastroenterologist</option>
+                <option>Pulmonologist</option>
               </select>
             </div>
 
             <div class="field full-width">
               <label for="preferredDoctor">Preferred Doctor *</label>
-              <select id="preferredDoctor" name="preferredDoctor">
+              <select id="preferredDoctor" name="preferredDoctor" required>
                 <option value="">Select a doctor</option>
-                <option value="Dr. Aarav Sharma">Dr. Aarav Sharma — General Physician — 4.9/5</option>
-                <option value="Dr. Priya Mehta">Dr. Priya Mehta — Cardiologist — 4.8/5</option>
-                <option value="Dr. Rohan Gupta">Dr. Rohan Gupta — Dermatologist — 4.7/5</option>
-                <option value="Dr. Ananya Verma">Dr. Ananya Verma — Pediatrician — 4.9/5</option>
-                <option value="Dr. Kabir Singh">Dr. Kabir Singh — Orthopedic — 4.6/5</option>
-                <option value="Dr. Meera Joshi">Dr. Meera Joshi — Gynecologist — 4.8/5</option>
-                <option value="Dr. Ishaan Kapoor">Dr. Ishaan Kapoor — Neurologist — 4.7/5</option>
-                <option value="Dr. Sanya Malhotra">Dr. Sanya Malhotra — Ophthalmologist — 4.8/5</option>
-                <option value="Dr. Vivaan Patel">Dr. Vivaan Patel — Dentist — 4.6/5</option>
-                <option value="Dr. Aditi Rao">Dr. Aditi Rao — Psychiatrist — 4.9/5</option>
               </select>
-              <small>Doctor ratings and recommendation levels are shown in this list.</small>
+              <small>Select your doctor here. You will not need to select them again on the next page.</small>
             </div>
 
             <div class="field full-width">
@@ -113,63 +102,62 @@
               <label for="preferredTime">Preferred Time Slot *</label>
               <select id="preferredTime" name="preferredTime" required>
                 <option value="">Select a time</option>
-                <option value="09:00 AM">09:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option>
-                <option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option>
-                <option value="02:00 PM">02:00 PM</option>
-                <option value="03:00 PM">03:00 PM</option>
-                <option value="04:00 PM">04:00 PM</option>
-                <option value="05:00 PM">05:00 PM</option>
+                <option value="09:00">09:00 AM</option>
+                <option value="09:30">09:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="14:30">02:30 PM</option>
+                <option value="15:00">03:00 PM</option>
+                <option value="15:30">03:30 PM</option>
+                <option value="16:00">04:00 PM</option>
+                <option value="16:30">04:30 PM</option>
+                <option value="17:00">05:00 PM</option>
+                <option value="17:30">05:30 PM</option>
               </select>
             </div>
           </div>
 
           <div class="notice">
             <span>ⓘ</span>
-            <p>This is an academic demonstration project. The doctors, availability, and ratings are fictional and are not verified medical recommendations.</p>
+            <p>This is an academic demonstration project. Doctors, ratings and availability are fictional and are not verified medical recommendations.</p>
           </div>
 
           <div class="form-actions">
             <span class="required-note">* Required fields</span>
-            <button type="button" class="btn btn-primary" id="toStep2">Find Doctors <span>→</span></button>
+            <button type="button" class="btn btn-primary" id="toStep2">Find Doctor <span>→</span></button>
           </div>
         </section>
 
-        <!-- STEP 2 -->
+        <!-- STEP 2: DISPLAY THE ALREADY SELECTED DOCTOR -->
         <section class="form-step" id="step2" hidden>
           <div class="section-heading">
             <span class="section-icon">02</span>
             <div>
-              <h2>Choose Your Doctor &amp; Slot</h2>
-              <p>Compare the available sample profiles and choose a time.</p>
+              <h2>Your Selected Doctor &amp; Slot</h2>
+              <p>Review your selection before entering patient details.</p>
             </div>
           </div>
 
-          <div class="selection-summary" id="selectionSummary"></div>
+          <div id="selectionSummary" class="selection-summary"></div>
+          <div id="selectedDoctorProfile" class="selected-doctor-profile" aria-live="polite"></div>
 
-          <div class="field">
-            <label for="doctorSearch">Search Doctor by Name</label>
-            <input type="search" id="doctorSearch" placeholder="Type a doctor's name">
-          </div>
-
-          <div id="doctorList" class="doctor-list" aria-live="polite"></div>
-
-          <div class="field slot-field">
-            <label for="chosenSlot">Select Your Appointment Slot *</label>
-            <select id="chosenSlot" required>
-              <option value="">Select a slot</option>
-            </select>
-            <small>Choose a slot from the available sample timings.</small>
+          <div class="notice">
+            <span>✓</span>
+            <p>Your doctor, appointment date and time have already been selected. You do not need to choose them again on this page.</p>
           </div>
 
           <div class="form-actions">
-            <button type="button" class="btn btn-secondary" id="backToStep1">← Back</button>
+            <button type="button" class="btn btn-secondary" id="backToStep1">← Back to Preferences</button>
             <button type="button" class="btn btn-primary" id="toStep3">Next: Patient Details →</button>
           </div>
         </section>
 
-        <!-- STEP 3 -->
+        <!-- STEP 3: PATIENT DETAILS -->
         <section class="form-step" id="step3" hidden>
           <div class="section-heading">
             <span class="section-icon">03</span>
@@ -188,7 +176,7 @@
             <div class="field">
               <label for="patientEmail">Email Address *</label>
               <input type="email" id="patientEmail" name="patientEmail" placeholder="you@example.com" autocomplete="email" maxlength="120" required>
-              <small>Your appointment confirmation will be sent to this address once email delivery is connected.</small>
+              <small>Your confirmation email will be sent if EmailJS is configured correctly.</small>
             </div>
 
             <div class="field">
@@ -198,12 +186,11 @@
           </div>
 
           <div id="finalSummary" class="final-summary"></div>
-
           <p id="emailStatus" role="status" aria-live="polite" hidden></p>
 
           <div class="notice">
             <span>🔒</span>
-            <p>Academic demo only. Do not enter sensitive medical information. This version does not process payments or provide real medical appointments. Email confirmation requires the EmailJS configuration in script.js.</p>
+            <p>Academic demonstration only. No payment is processed and no real medical appointment is created. Email confirmation depends on your EmailJS configuration.</p>
           </div>
 
           <div class="form-actions">
@@ -218,7 +205,7 @@
         <div class="success-icon">✓</div>
         <span class="eyebrow">DEMO BOOKING CONFIRMATION</span>
         <h2>Slot Successfully Booked!</h2>
-        <p class="receipt-message">Your sample appointment has been confirmed in this browser session.</p>
+        <p class="receipt-message">Your sample appointment has been recorded in this browser session.</p>
 
         <div class="receipt-number">
           <span>Booking Reference</span>
@@ -235,7 +222,7 @@
         </div>
 
         <p id="receiptEmailStatus" role="status" aria-live="polite">Email confirmation status will appear here.</p>
-        <p class="receipt-footnote">No payment has been collected. This receipt is for a college project demonstration and is not proof of a real medical appointment.</p>
+        <p class="receipt-footnote">No payment has been collected. This receipt is for a college project demonstration only.</p>
 
         <div class="form-actions receipt-actions">
           <button type="button" class="btn btn-secondary" id="printReceipt">Print Receipt</button>
