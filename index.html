@@ -6,7 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="MediSlot AI doctor appointment booking project">
   <title>MediSlot AI | Doctor Appointment Booking</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- EmailJS library: must load before script.js -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    defer>
+  </script>
+
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -20,14 +28,18 @@
   </header>
 
   <main class="page-container">
+
     <section class="hero">
       <span class="eyebrow">YOUR HEALTH, YOUR TIME</span>
       <h1>MediSlot AI Slot Booking</h1>
-      <p>Find your preferred doctor, choose a convenient slot,
-        and book your consultation in a few simple steps.</p>
+      <p>
+        Find your preferred doctor, choose a convenient slot,
+        and book your consultation in a few simple steps.
+      </p>
     </section>
 
     <section class="booking-panel">
+
       <div class="stepper" aria-label="Booking progress">
         <div class="step active" data-step-indicator="1">
           <span class="step-number">1</span>
@@ -36,7 +48,7 @@
         <span class="step-line"></span>
         <div class="step" data-step-indicator="2">
           <span class="step-number">2</span>
-          <span>Doctor & Slot</span>
+          <span>Doctor &amp; Slot</span>
         </div>
         <span class="step-line"></span>
         <div class="step" data-step-indicator="3">
@@ -49,6 +61,7 @@
 
         <!-- STEP 1: APPOINTMENT PREFERENCES -->
         <section class="form-step active" id="step1">
+
           <div class="section-heading">
             <span class="section-icon">01</span>
             <div>
@@ -58,6 +71,7 @@
           </div>
 
           <div class="form-grid">
+
             <div class="field full-width">
               <label for="specialty">Type of Doctor *</label>
               <select id="specialty" name="specialty" required>
@@ -82,7 +96,9 @@
               <select id="preferredDoctor" name="preferredDoctor" required>
                 <option value="">Select a doctor</option>
               </select>
-              <small>Doctor ratings and recommendation levels are shown in this list.</small>
+              <small>
+                Doctor ratings and recommendation levels are shown in this list.
+              </small>
             </div>
 
             <div class="field full-width">
@@ -98,7 +114,11 @@
 
             <div class="field">
               <label for="preferredDate">Preferred Date *</label>
-              <input type="date" id="preferredDate" name="preferredDate" required>
+              <input
+                type="date"
+                id="preferredDate"
+                name="preferredDate"
+                required>
             </div>
 
             <div class="field">
@@ -115,12 +135,16 @@
                 <option value="05:00 PM">05:00 PM</option>
               </select>
             </div>
+
           </div>
 
           <div class="notice">
             <span>ⓘ</span>
-            <p>This is a demonstration project. The doctors and their ratings
-              are fictional and are not verified medical recommendations.</p>
+            <p>
+              This is an academic demonstration project. The doctors,
+              availability, and ratings are fictional and are not verified
+              medical recommendations.
+            </p>
           </div>
 
           <div class="form-actions">
@@ -129,14 +153,16 @@
               Find Doctors <span>→</span>
             </button>
           </div>
+
         </section>
 
         <!-- STEP 2: DOCTOR LIST AND SLOT SELECTION -->
         <section class="form-step" id="step2" hidden>
+
           <div class="section-heading">
             <span class="section-icon">02</span>
             <div>
-              <h2>Choose Your Doctor & Slot</h2>
+              <h2>Choose Your Doctor &amp; Slot</h2>
               <p>Compare the available sample profiles and choose a time.</p>
             </div>
           </div>
@@ -145,10 +171,17 @@
 
           <div class="field">
             <label for="doctorSearch">Search Doctor by Name</label>
-            <input type="search" id="doctorSearch" placeholder="Type a doctor's name">
+            <input
+              type="search"
+              id="doctorSearch"
+              placeholder="Type a doctor's name">
           </div>
 
-          <div id="doctorList" class="doctor-list" aria-live="polite"></div>
+          <div
+            id="doctorList"
+            class="doctor-list"
+            aria-live="polite">
+          </div>
 
           <div class="field slot-field">
             <label for="chosenSlot">Select Your Appointment Slot *</label>
@@ -166,10 +199,12 @@
               Next: Patient Details →
             </button>
           </div>
+
         </section>
 
         <!-- STEP 3: PATIENT DETAILS -->
         <section class="form-step" id="step3" hidden>
+
           <div class="section-heading">
             <span class="section-icon">03</span>
             <div>
@@ -179,35 +214,70 @@
           </div>
 
           <div class="form-grid">
+
             <div class="field full-width">
               <label for="patientName">Patient's Full Name *</label>
-              <input type="text" id="patientName" name="patientName"
-                placeholder="Enter your full name" autocomplete="name"
-                minlength="2" maxlength="80" required>
+              <input
+                type="text"
+                id="patientName"
+                name="patientName"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                minlength="2"
+                maxlength="80"
+                required>
             </div>
 
             <div class="field">
               <label for="patientEmail">Email Address *</label>
-              <input type="email" id="patientEmail" name="patientEmail"
-                placeholder="you@example.com" autocomplete="email"
-                maxlength="120" required>
+              <input
+                type="email"
+                id="patientEmail"
+                name="patientEmail"
+                placeholder="you@example.com"
+                autocomplete="email"
+                maxlength="120"
+                required>
+              <small>
+                Your appointment confirmation will be sent to this address
+                once email delivery is connected.
+              </small>
             </div>
 
             <div class="field">
               <label for="patientPhone">Phone Number *</label>
-              <input type="tel" id="patientPhone" name="patientPhone"
-                placeholder="10-digit mobile number" autocomplete="tel"
-                inputmode="numeric" pattern="[6-9][0-9]{9}"
-                maxlength="10" required>
+              <input
+                type="tel"
+                id="patientPhone"
+                name="patientPhone"
+                placeholder="10-digit mobile number"
+                autocomplete="tel"
+                inputmode="numeric"
+                pattern="[6-9][0-9]{9}"
+                maxlength="10"
+                required>
             </div>
+
           </div>
 
           <div id="finalSummary" class="final-summary"></div>
 
+          <!-- Email delivery status -->
+          <p
+            id="emailStatus"
+            role="status"
+            aria-live="polite"
+            hidden>
+          </p>
+
           <div class="notice">
             <span>🔒</span>
-            <p>This static demo does not send or store your details on a server.
-              Use fictional details when testing it.</p>
+            <p>
+              Academic demo only. Do not enter sensitive medical information.
+              This version does not process payments or provide real medical
+              appointments. Email confirmation requires the EmailJS
+              configuration in script.js.
+            </p>
           </div>
 
           <div class="form-actions">
@@ -218,14 +288,23 @@
               Confirm Booking · ₹800
             </button>
           </div>
+
         </section>
+
       </form>
 
       <!-- BOOKING RECEIPT -->
-      <section id="receipt" class="receipt" hidden aria-live="polite">
+      <section
+        id="receipt"
+        class="receipt"
+        hidden
+        aria-live="polite">
+
         <div class="success-icon">✓</div>
+
         <span class="eyebrow">DEMO BOOKING CONFIRMATION</span>
         <h2>Slot Successfully Booked!</h2>
+
         <p class="receipt-message">
           Your sample appointment has been confirmed in this browser session.
         </p>
@@ -241,13 +320,19 @@
           <span>Consultation Fee</span>
           <strong>₹800</strong>
         </div>
+
         <div class="fee-row total-row">
           <span>Total Amount</span>
           <strong>₹800</strong>
         </div>
 
+        <p id="receiptEmailStatus" role="status" aria-live="polite">
+          Email confirmation status will appear here.
+        </p>
+
         <p class="receipt-footnote">
-          No payment has been collected. This receipt is for a college project demo.
+          No payment has been collected. This receipt is for a college
+          project demonstration and is not proof of a real medical appointment.
         </p>
 
         <div class="form-actions receipt-actions">
@@ -258,13 +343,17 @@
             New Booking
           </button>
         </div>
+
       </section>
+
     </section>
 
     <footer>
       <p>© 2026 MediSlot AI · Academic Demonstration Project</p>
       <p>Fictional doctor data · Not for real medical bookings</p>
     </footer>
+
   </main>
+
 </body>
 </html>
